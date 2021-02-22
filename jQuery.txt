@@ -1,0 +1,47 @@
+$(selector).action()    //basic syntax
+$(document).ready(function(){  // jQuery methods go here...});
+$(function(){  // jQuery methods go here...});  //shoreter version of ready code above 
+$("*")  //	Selects all elements	
+$(this) //	Selects the current HTML element	
+$("p.intro")    //	Selects all <p> elements with class="intro"	
+$("p:first")    //	Selects the first <p> element	
+$("ul li:first")    //	Selects the first <li> element of the first <ul>	
+$("ul li:first-child")  //	Selects the first <li> element of every <ul>	
+$("[href]") //	Selects all elements with an href attribute	
+$("a[target='_blank']") //	Selects all <a> elements with a target attribute value equal to "_blank"	
+$("a[target!='_blank']")    //	Selects all <a> elements with a target attribute value NOT equal to "_blank"	
+$(":button")    //	Selects all <button> elements and <input> elements of type="button"	
+$("tr:even")    //	Selects all even <tr> elements	
+$("tr:odd") //	Selects all odd <tr> elements
+
+// EVENTS
+Mouse Events	Keyboard Events	Form Events	Document/Window Events
+click	            keypress	    submit	    load
+dblclick	        keydown	        change	    resize
+mouseenter  	    keyup	        focus	    scroll
+mouseleave	 	    blur	        unload
+
+// Commonly Used jQuery Event Methods
+$(document).ready()
+click()
+dblclick()
+mouseenter()
+mouseleave()
+mousedown()
+mouseup()
+hover()
+focus()
+blur()
+
+on()    // method attaches one or more event handlers for the selected elements.
+$("p").on({
+  mouseenter: function(){
+    $(this).css("background-color", "lightgray");
+  },
+  mouseleave: function(){
+    $(this).css("background-color", "lightblue");
+  },
+  click: function(){
+    $(this).css("background-color", "yellow");
+  }
+});
