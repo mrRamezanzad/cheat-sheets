@@ -45,3 +45,46 @@ $("p").on({
     $(this).css("background-color", "yellow");
   }
 });
+\
+
+//jQuery Effects 
+
+//Fade
+$(selector).hide(speed ["slow", "fast", or milliseconds],callback);
+$(selector).show(speed,callback);
+$(selector).toggle(speed,callback); // toggle between hide and show
+$(selector).fadeIn(speed,callback);
+$(selector).fadeOut(speed,callback);
+$(selector).fadeToggle(speed,callback);
+$(selector).fadeTo(speed,opacity[0-1],callback); //fading to a given opacity
+
+//Slide
+$(selector).slideDown(speed,callback);
+$(selector).slideUp(speed,callback);
+$(selector).slideToggle(speed,callback);
+
+//Animate
+$(selector).animate({params},speed,callback);
+
+$("button").click(function(){
+  $("div").animate({
+    left: '250px',
+    opacity: '0.5',
+    height: '150px',
+    width: '150px'
+// names must be camel case (paddinRight: 10px) & for colors should install color animation plugin
+    height: '+=150px',
+    width: '+=150px'
+// the values above then relative to the element's current value
+  });
+}); 
+
+//using predefined values
+$("button").click(function(){
+  $("div").animate({
+    height: 'toggle'
+  });
+}); 
+
+//Stop Animation
+$(selector).stop(stopAll[true/false, Alowing any queued animations to be performed afterwards],goToEnd[complete the current animation immediately]);
