@@ -1,0 +1,3 @@
+constraints [not null, unique, primary key, foreign key, check, default, index ]
+ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');	
+ALTER TABLE company.employees ADD CHECK (Age>=15);

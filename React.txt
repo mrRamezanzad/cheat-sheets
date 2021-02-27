@@ -1,0 +1,123 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+class Test extends React.Component {
+  render() {
+    return <h1>Hello World!</h1>;
+  }
+}
+
+//render
+ReactDOM.render(<Test />, document.getElementById('root'));
+
+//JSX Expressions
+write expressions inside curly braces { }
+Close empty elements with />
+
+//React Components
+the component's name must start with an upper case letter
+
+class Car extends React.Component {
+  constructor() {
+    super();
+    this.state = {color: "red"};
+  }
+  render() {
+    return <h2>I am a {this.state.color} Car!</h2>;
+  }
+}
+
+//Props in the Constructor
+class Car extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return <h2>I am a {this.props.model}!</h2>;
+  }
+}
+
+ReactDOM.render(<Car model="Mustang"/>, document.getElementById('root'));
+
+//React State
+
+class Car extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      brand: "Ford",
+      model: "Mustang",
+      color: "red",
+      year: 1964
+    };
+  }
+  changeColor = () => {
+    this.setState({color: "blue"});
+  }
+  render() {
+    return (
+      <div>
+        <h1>My {this.state.brand}</h1>
+        <p>
+          It is a {this.state.color}
+          {this.state.model}
+          from {this.state.year}.
+        </p>
+        <button
+          type="button"
+          onClick={this.changeColor}
+        >Change color</button>
+      </div>
+    );
+  }
+}
+
+// when mounting a component
+1-constructor()
+
+constructor(props) {
+    super(props);
+    this.state = {favoritecolor: "red"};
+  }
+
+2-getDerivedStateFromProps() //This is the natural place to set the state object based on the initial props.
+
+static getDerivedStateFromProps(props, state) {
+    return {favoritecolor: props.favcol };
+  }
+
+3-render()
+4-componentDidMount()
+
+//when a component is updated
+1-getDerivedStateFromProps()
+2-shouldComponentUpdate()
+3-render()
+4-getSnapshotBeforeUpdate()
+
+getSnapshotBeforeUpdate(prevProps, prevState) {
+    document.getElementById("div1").innerHTML =
+    "Before the update, the favorite was " + prevState.favoritecolor;
+  }
+
+5-componentDidUpdate()
+
+
+//Unmounting
+componentWillUnmount()
+
+//Adding Events
+React events are written in camelCase syntax: onClick={shoot}  instead of onClick="shoot()".
+
+//if using normal funciton we should bind this to funciton
+constructor(props) {
+    super(props)
+    this.shoot = this.shoot.bind(this)
+  }
+
+  onClick={this.shoot.bind(this, "Goal")}
+NOTE:
+    If you send arguments without using the bind method,
+    (this.shoot(this, "Goal") instead of this.shoot.bind(this, "Goal")),
+    the shoot function will be executed when the page is loaded instead of
+    waiting for the button to be clicked.
