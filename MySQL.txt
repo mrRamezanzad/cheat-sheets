@@ -1,3 +1,16 @@
 constraints [not null, unique, primary key, foreign key, check, default, index ]
 ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');	
 ALTER TABLE company.employees ADD CHECK (Age>=15);
+select p.*, c.name from join_example.person as p join join_example.city as c on c.id = p.city_id;
+select p.*, c.name from join_example.person as p join join_example.city as c on c.id = p.city_id where c.name ="tehran";
+select p.*, c.name from join_example.person as p join join_example.city as c using (city_id) whre c.name = 'tehran';
+select * from join_example.person whre age in (27, 59);
+select p.* from join_example.person as p where p.city_id = (select c.city_ id from join_ example.city as c where c.name - "tehran");
+select p.* from join_example.person as p where p.age < (select avg(p1.age) from person as p1);
+round(), sum(), limit <number>
+using  offset
+case <table_name>
+when age> 7 then "there is no child here"
+else "good bye baby"
+end as childAge
+from <database>;
