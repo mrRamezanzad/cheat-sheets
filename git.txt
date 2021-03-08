@@ -1,0 +1,52 @@
+git init [project name]
+git clone username@host:/path/to/repository
+git clone /path/to/repository	#to copy a local repository
+git add '*.txt' #add certain files
+git commit –m “Message to go with the commit here”
+git config --local user.email youremail@example.com
+git status
+git log --oneline #shows only messages and commit id's
+git log --follow John_Doe #for specific file
+git push origin <master>
+git checkout -b <branch-name>
+git checkout <branch-name>
+git remote –v
+git remote add origin <host-or-remoteURL>
+git remote rm <name-of-the-repository>
+git branch
+git branch --list
+git branch –d <branch-name>
+git push origin :<branch-name> #removes the same branch on remote
+git pull #This command is a combination of git fetch and git merge 
+git pull --rebase origin master
+#it keeps an ordered git history, because your changes are always added last
+git merge <branch-name>
+git diff #all the present conflicts
+git diff --base <file-name>	#lists down conflicts. view conflicts against the base file
+git diff <source-branch> <target-branch> #iew the conflicts between branches before merging them
+git tag <insert-commitID-here> #marks specific commits.Use it to mark  like v1.0 and v2.0.
+git reset --hard HEAD #reset the index and the working directory to the last git commit’s state
+git revert <commit-id>
+#will undo the given commit, but will create a new commit without deleting the older one
+#safer than reset and doesn't touch the commit history.
+git rm filename.txt
+git stash #temporarily save the changes that are not ready to be committed
+git show #view information about any git object
+git show HEAD~2:<replace_with_file_path>
+git fetch origin
+#fetch all objects from the remote repository that don’t currently reside in the local working directory.
+git ls-tree HEAD 
+#view a tree object along with the name, the mode of each item, and the blob’s SHA-1 value. Let’s say you want to see the HEAD
+git cat-file –p d670460b4b4aece5915caf5c68d12f560a9fe3e4 
+#view the type and the size information of a repository object.
+#Use the -p option along with the object’s SHA-1 value to view the information of a specific object
+git grep "www.hostinger.com"
+#search through committed trees, working directory, and staging area for specific phrases and words
+gitk #shows the graphical interface for a local repository.
+git instaweb –httpd=webrick #browse your local repository in the git-web interface
+git gc #clean unnecessary files and optimize the local repository
+git archive --format=tar master 
+#create a zip or a tar file containing the constituents of a single repository tree
+git prune #deletes objects that don’t have any incoming pointers
+git fsck #performs an integrity check of the git file system and identifies any corrupted objects
+git rebase master # apply certain changes from one branch to another
