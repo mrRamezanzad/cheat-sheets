@@ -3,6 +3,8 @@ git clone username@host:/path/to/repository
 git clone /path/to/repository	#to copy a local repository
 git add '*.txt' #add certain files
 git commit –m “Message to go with the commit here”
+git commit --amend -m 'new message here'
+git commit --amend --no-edit #added latest changes to last commit without changing message
 git config --local user.email youremail@example.com
 git status
 git log --oneline #shows only messages and commit id's

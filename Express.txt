@@ -1,0 +1,54 @@
+========================== Mongoose
+{useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology} # handles deprication errors
+{type: mongoose.Schema.Types.ObjectId
+required: true,
+minLength: 3,
+maxlength: 6,
+trim,
+default: Date.now
+}
+
+================== bcrypt
+bcrypt.hash(<passwor-text>, <number-of-salt-rounds>, (err, hash) => {
+	#saving the hashed password processes
+	next()
+}
+
+=================== cookie
+document.cookie
+require('cookie-parser')
+
+app.use(cookieParser())
+res.cookie("name", "ramin")
+res.cookie({name: "ramin"})
+console.log(req.cookies)
+res.clearCookie("name")
+
+=========================== session
+require('express-session')
+app.use(session({
+	key: 'user_sid',
+	secret: 'mysercretKey',
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+	    expires: 600000
+	}
+   })
+)
+
+req.session.user = user
+console.log(req.session)
+
+======================= user authentication steps
+1- setup
+2- define user model and mongoose connection
+3- add register page (route, view)
+4- add register route (bcrypt)
+5- add login page (route, view)
+6- add login route (render dashboard)
+7- add express session (install, require, middleware)
+8- add req.session.user in login route
+9- use req.sesssion.user
+10- sesssionChecker for logedIn users
+11- loginChecker for logoute users
