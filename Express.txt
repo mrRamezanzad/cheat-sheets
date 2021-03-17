@@ -29,8 +29,10 @@ require('express-session')
 app.use(session({
 	key: 'user_sid',
 	secret: 'mysercretKey',
-	resave: false,
+	resave: false, 
+# resave even if session did not change (bad for two requests with change and no change conflicting)
 	saveUninitialized: false,
+# saves session by default(true) useful when we have to ask permission
 	cookie: {
 	    expires: 600000
 	}
