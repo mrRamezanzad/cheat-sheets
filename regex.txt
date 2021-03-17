@@ -1,0 +1,90 @@
+Basics
+/ expression / flags, i.e /[A-Z]+/g basic format
+/ hello\?\*\\/ escape special characters with backslashes
+() group with parentheses
+| logical OR
+Character classes
+\w word \d digit \s whitespace (tabs, line breaks)
+\W NOT word \D NOT digit \S NOT whitespace
+\t tabs, \n line breaks
+. any character (except newline)
+Brackets
+[xyz] match any x, y, z
+[J-Z] match any capital letters between J & Z.
+[^xyz] NOT x, y, z
+Quantification
+bob|alice match bob or alice
+z? zero or one occurrences
+z* zero or multiple occurrences
+z+ one or multiple occurrences
+z{n} n occurrences
+z{min,max} min/max occurrences
+Anchors
+hello world exact match
+^hello start of the strings
+world$ end of the string
+
+Logic
+Logic	Legend	Example	Sample Match
+|	Alternation / OR operand	22|33	33
+( … )	Capturing group	A(nt|pple)	Apple (captures "pple")
+\1	Contents of Group 1	r(\w)g\1x	regex
+\2	Contents of Group 2	(\d\d)\+(\d\d)=\2\+\1	12+65=65+12
+(?: … )	Non-capturing group	A(?:nt|pple)	Apple
+
+
+More Quantifiers
+Quantifier	Legend	Example	Sample Match
++	The + (one or more) is "greedy"	\d+	12345
+?	Makes quantifiers "lazy"	\d+?	1 in 12345
+*	The * (zero or more) is "greedy"	A*	AAA
+?	Makes quantifiers "lazy"	A*?	empty in AAA
+{2,4}	Two to four times, "greedy"	\w{2,4}	abcd
+?	Makes quantifiers "lazy"	\w{2,4}?	ab in abcd
+
+Character Classes
+Character	Legend	Example	Sample Match
+[ … ]	One of the characters in the brackets	[AEIOU]	One uppercase vowel
+[ … ]	One of the characters in the brackets	T[ao]p	Tap or Top
+-	Range indicator	[a-z]	One lowercase letter
+[x-y]	One of the characters in the range from x to y	[A-Z]+	GREAT
+[ … ]	One of the characters in the brackets	[AB1-5w-z]	One of either: A,B,1,2,3,4,5,w,x,y,z
+[x-y]	One of the characters in the range from x to y	[ -~]+	Characters in the printable section of the ASCII table.
+[^x]	One character that is not x	[^a-z]{3}	A1!
+[^x-y]	One of the characters not in the range from x to y	[^ -~]+	Characters that are not in the printable section of the ASCII table.
+[\d\D]	One character that is a digit or a non-digit	[\d\D]+	Any characters, inc-
+luding new lines, which the regular dot doesn't match
+[\x41]	Matches the character at hexadecimal position 41 in the ASCII table, i.e. A	[\x41-\x45]{3}	ABE
+
+
+Lookarounds
+Lookaround	Legend	Example	Sample Match
+(?=…)	Positive lookahead	(?=\d{10})\d{5}	01234 in 0123456789
+(?<=…)	Positive lookbehind	(?<=\d)cat	cat in 1cat
+(?!…)	Negative lookahead	(?!theatre)the\w+	theme
+(?<!…)	Negative lookbehind	\w{3}(?<!mon)ster	Munster
+const matches = 'aBC'.match(/[A-Z]/g);
+// Output: Array [B, C]
+
+const index = 'aBC'.search(/[A-Z]/);
+// Output: 1
+
+const next = 'aBC'.replace(/a/, 'A');
+// Output: ABC
+
+#=============================== Examples =================================#
+#password validation
+const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g
+
+"1sMyPasswordOK?".search(re);
+
+#Hex Codes
+const re = /#?([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/g
+
+"color: #ffffff; color: #000000;".match(re);
+
+#Remove HTML Tags
+const re = /(<script(\s|\S)*?<\/script>)|(<style(\s|\S)*?<\/style>)|(<!--(\s|\S)*?-->)|(<\/?(\s|\S)*?>)/g
+
+const sanitized = "<h1>Hello World</h1>".replace(re, '');
+
