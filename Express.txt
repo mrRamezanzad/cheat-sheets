@@ -54,3 +54,36 @@ console.log(req.session)
 9- use req.sesssion.user
 10- sesssionChecker for logedIn users
 11- loginChecker for logoute users
+
+
+============================ Multer
+cont avatarStorage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, path.join(__dirname, '../public/images'))
+	},
+	filename: function (req, file, cb) {
+		cb(null, `${req.session.user.username}-${Date.now()}-${file.originalname}`)
+	}
+})
+
+path.extname(file.originalname) # trick to get the extension of file 
+
+uploadAvatar = multer({
+	storage: avatarStorage, 
+	fileFilter: function (req, file, cb) {
+		if (file.mimetype === 'img/png' ||file.mimetype === 'img/jpg' ||file.mimeType === 'img/jpeg') {
+			cb(new Error('invalid type!'))
+		} else {
+			cb(null, true)
+		}
+})		
+
+# using upload functionality in router
+router.post('/avatar', (req, res) => {
+	const upload = generealTools.uploadAvatar.single('avatar')
+	upload(req, res, function(err) {
+		if (err instanceof multer.MulterError) {res.status(404).send('Server Error!')}
+		else if (err) {res.status(406).send(err.message)}
+		else {res.json(true)}
+	})
+})
