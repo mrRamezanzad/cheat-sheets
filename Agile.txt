@@ -1,0 +1,27 @@
+ wbs: work breaking structure
+uml: unified modeling language
+
+RUP, ITERATIVE, AGILE
+
+formal technical review(IBM)
+
+continius delivering: jenkins
+
+wiki: A wiki is essentially a database for creating, browsing,
+ and searching through information. A wiki allows non-linear, evolving, complex, and networked text
+
+bugs : heisenbug or superbug therac-25( bug of a radiotherapy machine)
+race condition: multi-thread
+
+https://hbr.org/1986/01/the-new-new-product-development-game
+1 600.000
+5 150.000
+20 150.000
+
+1 200.000
+5 -250.000
+20 -300.000
+
+A/B testing کم کم فعال کردن ویژگی ها و برای یه محدوده و افراد خاص مثل اینستاگرام
+scrum : not proper for more than 10 people on a project 
+agile : for project more than hundreds workers

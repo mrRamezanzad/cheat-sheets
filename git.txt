@@ -1,3 +1,4 @@
+git config credential.helper store
 git init [project name]
 git clone username@host:/path/to/repository
 git clone /path/to/repository	#to copy a local repository
