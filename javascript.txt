@@ -1,0 +1,100 @@
+#============================ Loops ======================
+#The JavaScript for/in statement loops through the properties of an Object:
+-for (index in array){}
+#Do not use for in over an Array if the index order is important
+#It is better to use a for loop, a for of loop, or Array.forEach() when the order is important.
+
+# iterable data structures such as Arrays, Strings, Maps, NodeLists, and more...
+-for (variable of iterable[such as Arrays, Strings, Maps, NodeLists]) {}
+
+-forEach((value, index, array) => {})
+
+#================================ Conditional Assignments =================================
+-Logical OR assignment (||=)
+only assigns if x is falsy.
+	const a = { duration: 50, title: '' };
+
+	a.duration ||= 10;
+	console.log(a.duration); # expected output: 50
+
+	a.title ||= 'title is empty.';
+	console.log(a.title); # expected output: "title is empty"
+
+-Logical nullish assignment (??=)
+only assigns if x is nullish (null or undefined).
+
+	const a = { duration: 50 };
+	a.duration ??= 10;
+	console.log(a.duration); #expected output: 50
+
+#nullish coalescing
+x ??= y is equivalent to: x ?? (x = y);
+
+-Logical AND assignment (&&=)
+only assigns if x is truthy.
+	let a = 1;
+	let b = 0;
+
+	a &&= 2;
+	console.log(a); #expected output: 2
+
+	b &&= 2;
+	console.log(b); # expected output: 0
+
+-Optional chaining (?.)
+accessing values through connected objects when 
+it's possible that a reference or function may be undefined or null.
+	let nestedProp = obj.first?.second 
+
+/*
+By using the ?. operator instead of just ., JavaScript knows to 
+implicitly check to be sure obj.first is not null or undefined
+before attempting to access obj.first.second
+is equvalet to 
+*/
+
+	let nestedProp = obj.first && obj.first.second;
+
+-Pipeline operator (|>)
+pipes the value of an expression into a function
+
+	let url = "%21" |> decodeURI; 
+			VS
+	let url = decodeURI("%21");
+# ================================= JS Object ===========================
+// Adding or changing an object property
+Object.defineProperty(object, property, {value : value})
+#descriptors 
+writable : true      // Property value can be changed
+enumerable : true    // Property can be enumerated
+configurable : true  // Property can be reconfigured
+
+// Adding or changing many object properties
+Object.defineProperties(object, descriptors)
+
+// Accessing Properties
+Object.getOwnPropertyDescriptor(object, property)
+
+// Returns all properties as an array
+Object.getOwnPropertyNames(object)
+
+// Returns enumerable properties as an array
+Object.keys(object)
+
+// Accessing the prototype
+Object.getPrototypeOf(object)
+
+// Prevents adding properties to an object
+Object.preventExtensions(object)
+// Returns true if properties can be added to an object
+Object.isExtensible(object)
+
+// Prevents changes of object properties (not values)
+Object.seal(object)
+// Returns true if object is sealed
+Object.isSealed(object)
+
+// Prevents any changes to an object
+Object.freeze(object)
+// Returns true if object is frozen
+Object.isFrozen(object)

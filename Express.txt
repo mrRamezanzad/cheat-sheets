@@ -73,6 +73,7 @@ path.extname(file.originalname) # trick to get the extension of file
 uploadAvatar = multer({
 	storage: avatarStorage, 
 	fileFilter: function (req, file, cb) {
+		# checking by regular expression
 		if (file.mimetype === 'img/png' ||file.mimetype === 'img/jpg' ||file.mimeType === 'img/jpeg') {
 			cb(new Error('invalid type!'))
 		} else {
@@ -89,3 +90,4 @@ router.post('/avatar', (req, res) => {
 		else {res.json(true)}
 	})
 })
+
