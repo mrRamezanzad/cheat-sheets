@@ -59,9 +59,11 @@ console.log(req.session)
 ============================ Multer
 cont avatarStorage = multer.diskStorage({
 	destination: function (req, file, cb) {
+		let a = path.join(__dirname, '../public/images')
 		cb(null, path.join(__dirname, '../public/images'))
 	},
 	filename: function (req, file, cb) {
+		let a = `${req.session.user.username}-${Date.now()}-${file.originalname}`
 		cb(null, `${req.session.user.username}-${Date.now()}-${file.originalname}`)
 	}
 })
