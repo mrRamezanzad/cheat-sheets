@@ -1,0 +1,93 @@
+email: mtamadon1997@gmail.com
+telegram: mtamadon
+- docker run -it --rm [php, node, ubuntu] sh 
+#it => makes interactive & --rm => removes interactive part after exiting
+
+- docker run -it --rm node:alpine sh
+- docker run -it --rm node:12 sh
+# ':' => by using ':' we choose an specefic tag of versioning
+
+- docker ps -a
+- docker start 23442342fsf234 #starts from existing docker
+
+- docker commit 23442342fsf234  mynodeapp:1
+#Commiting makes a backup (image) from current state
+- docker image ls #listing all the images of docker
+
+#============automizing the process in Dockerfile=============
+- From node:alpine
+- Workdir /app
+- Copy package.json . 
+- Run npm i
+- Copy index.js . 
+- CMD ["node", "index.js"]
+
+# Copy <file-in-our-local-system> <location-in-docker-container-to-copy-into>
+- Run npm i expose 8080 #defines the port to run 
+# Run is commands that is used during making image
+
+- CMD...
+# CMD are the commands that used after installing the server
+
+- docker build . -t nodeapp:1 [it's a tag] -d [run in background]
+
+- docker run sdafasdfasfr74f
+- docker stop 4234hh3423h1jk [container-id]
+
+- from dockerhub.ir/node:12
+
+====================== load balancing==============
+haproxy
+nginx
+docker-swarm
+
+=========================nodes[servers] 
+1-master #always 51% of masters should be up (at least 3 masters)
+#msters manages the work of workers(slave)
+2-worker #applications are ran on these servers
+
+===================== Docker Compose =====================
+#docker-compose.yaml
+- docker-compose up
+- docker-compose down
+
+-docker logs fsadfsaf [container-id]
+
+#========================making application stateless
+
+1-minio
+2-s3 (by amazon)[it's called object storage]
+
+
+
+https://raft.github.io/
+
+etcd # for very critical data's we use etcd
+
+
+
+=========================== docker swarm
+- docker swarm init
+- docker node #for managing nodes of swarm
+- docker node ls
+- docker swarm join-token 
+- docker swarm join --token <token-code>
+
+#services in swarm & docker-compose are our applications that are on multiple containers
+
+#dockker service just runs from master node
+- docker service create  -p 8080:80 --name myserver nginx
+- docker service ls
+- docker service rm <service-name>
+- docker service ps myserver [name-of-service]
+- docker service scale myserver=6 [number-of-swarms-that-we-want]
+- docker service create --name apache -p 8080:80 httpd:2.4.41-alpine
+- docker swarm init --force-new-cluster --advertise-addr 192.168.0.26
+- docker swarm leave #quits the node out of swarm
+- docker node demote node3 [node-name]
+- docker node update node1 --availability [can run new services on it] 
+- docker node update node2 --label-add disk=ssd
+- docker node update node3 --label-add disk=hdd
+- docker node inspect #gives very detailed informations of node
+
+- docker stack deploy 
