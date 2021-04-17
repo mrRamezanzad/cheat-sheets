@@ -10,6 +10,8 @@
 -forEach((value, index, array) => {})
 
 #================================ Conditional Assignments =================================
+# something new called Object.is(first, second) compares more accurate than === 'triple equeal'
+
 -Logical OR assignment (||=)
 only assigns if x is falsy.
 	const a = { duration: 50, title: '' };
@@ -98,3 +100,52 @@ Object.isSealed(object)
 Object.freeze(object)
 // Returns true if object is frozen
 Object.isFrozen(object)
+
+# ================Wierd Parts==================
+
+: Lexical Environment : where a variable is defined which js engine dicides where to put them in memory
+
+: Execution Context : wrapper of the statements that are going to run for example each function has it's own execution Context
+
+: Execution Stack : js is single threaded syncronous language and executs them one by one 
+
+: Global Execution Context : creates 1- Global Object (which in browser is window) and 2- 'this' variable but there are other things like outer execution refrence 
+
+: variable Environment : place where a variable lives
+: outer Environment : refrence to outer execution context sits physically in the code so if some variable isn't present goes to scope chain and finds the variable 
+
+: in browser we have other engines like 1- render engine 2- HTTP request 3- event queue
+
+: event queue : helps js to have event listeners run after the code is done it means that event queue won't run until the  execution stack is done 
+
+: primitive values : keep one thing inside them unlike objects
+: * always use NULL instead of UNDEFINED so we can tell it is set by us not the js engine
+
+: infix notations : operators like + > < are functions but we use them different and sit between argumants
+
+: Associativity : in operators which one assigns to another right to left (=+-) or left to right (typeof) or ( . in member access <)
+: coercion : because js is Dynamic Type it always converts values to each other
+
+: Functions are Objects which it's codes that we write in it are just a property of that object that happens to be invocable
+# function greet() {}; greet.language = "persian"
+
+: function expressoins : expression is a unit of code that results in a value 1+2 a=2
+: function statements : they just do work like if statement
+
+: by value : all primetives are just a copy of value
+: Refrence : all objects and functions are passed by reference
+: = : however if we use equal operator to change assign new object to our variable 
+this operator sets up new memory space (new address)
+: mutate : changing something and immutable is something can't be changed
+
+
+: when an execution context is created for a function it sets up for us 1- variable environment 2- 'this' 3- Outer Environment 4- 'arguments': contains a list of all the values of all the parameters you pass to a function 
+
+: arguments keyword : gives us the value of parameters that are passed into the function
+
+: Syntax Parser : in js it works character by character and thus it prevents us from writing wrong even when we havn't run the program 
+
+: () : everything inside paranthesis is an expression like (2+3)*2 and when we put a function in that js thinks it is a function expression and we can make it a IIFE, it works this way because of Syntax parser feature and it gets tricked that we are making an expression and not a function
+(function(){}()) or (function(){})()
+
+: closure : makes sure that all the functions that where defined in different execution context have a reference access to that closure so if they need any variable from that closure they get it simply this way
