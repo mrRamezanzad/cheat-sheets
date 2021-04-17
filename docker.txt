@@ -91,3 +91,45 @@ etcd # for very critical data's we use etcd
 - docker node inspect #gives very detailed informations of node
 
 - docker stack deploy 
+
+
+
+========================================== pm2
+- pm2 start index.js #not a good option for big load projects a better way is running by docker 
+- pm2 monit
+- pm2 --watch [works like nodemon]
+nvm --remote-ls
+
+- yum install httpd
+- httpd [for checking application performance in ab command]
+- ab -n 10000 [number of requests] -c [number of sametime requests] 10 127.0.0.1:3000
+
+yum install bind-utils
+#gives ip address of servers
+dig A mtamadon.ir
+dig A google.com
+
+#must set mx and optional spf but make emails spam
+mx #getting email
+spf #sending email and who can send email
+
+=========================================== Redis
+# ioRedis is a nodejs library to work with redis 
+# default port is 6379
+# sql based (key value structure)
+# because this db is in-memory type so it's very fast
+# supports lists, sorted set, hash map (dictionary or js object) data types
+- docker run -p 6379:6379 redis
+- docker ps
+- docker exec -it a7 sh
+- redis
+- set name ali
+- get name 
+- set cnt 0
+- INCR cnt #increments the variable
+- INCRBY cnt 10 #add 10 to the variable 
+- DECR cnt #decrements the variable
+- HSET user name ali
+- HSET user mobile 098922345577
+- HGET user name
+- 

@@ -25,6 +25,7 @@ UpgradeRequiredError (426 Upgrade Required)
 PreconditionRequiredError (428 Precondition Required)
 TooManyRequestsError (429 Too Many Requests)
 RequestHeaderFieldsTooLargeError (431 Request Header Fields Too Large)
+============================ 500 ============================
 InternalServerError (500 Internal Server Error)
 NotImplementedError (501 Not Implemented)
 BadGatewayError (502 Bad Gateway)
