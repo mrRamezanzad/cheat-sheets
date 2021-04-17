@@ -1,0 +1,128 @@
+# ===========Variables===========
+
+# string
+my_name = "Leandro Tk"
+
+# symbol
+a_symbol = :my_symbol
+
+# float
+book_price = 15.80
+
+# array
+my_integers = [1, 2, 3, 4, 5]
+
+# hash
+hash_example = {
+  "key1" => "value1",
+  "key2" => "value2",
+  "key3" => "value3"
+}
+# ===========Control Flow===========
+
+if 2 > 1
+  puts "2 is greater than 1"
+end
+
+if 1 > 2
+  puts "1 is greater than 2"
+elsif 2 > 1
+  puts "1 is not greater than 2"
+else
+  puts "1 is equal to 2"
+end
+
+# more tricky way to put conditional after code
+def hey_ho?
+  true
+end
+
+puts "let’s go" if hey_ho?
+
+# ===========Iterator===========
+num = 1
+
+while num <= 10
+  puts num
+  num += 1
+end
+
+for num in 1...10
+  puts num
+end
+
+[1, 2, 3, 4, 5].each do |num|
+  puts num
+end
+# we can use each without do  like this =>> each {}
+
+hash = { "some_key" => "some_value" }
+hash.each { |key, value| puts "#{key}: #{value}" } # some_key: some_value
+
+# ===========Array Methods===========
+my_integers = [1, 2, 3, 4, 5]
+
+my_integers.push("hello")
+my_integers.<< "how are you"
+my_integers << "how are you"
+
+# ===========Hash Methods===========
+hash_tk = {
+  "name" => "Leandro",
+  "nickname" => "Tk",
+  "nationality" => "Brazilian"
+}
+
+print "My name is #{hash_tk["name"]}" # My name is Leandro
+
+# ===========Class===========
+
+class Vehicle < Automobile
+    attr_reader :number_of_wheels
+    attr_writer :number_of_wheels
+    attr_accessor :number_of_wheels, :seating_capacity, :maximum_velocity
+
+    def initialize(number_of_wheels, type_of_tank, seating_capacity, maximum_velocity)
+        @number_of_wheels = number_of_wheels
+        @type_of_tank = type_of_tank
+        @seating_capacity = seating_capacity
+        @maximum_velocity = maximum_velocity
+    end
+
+    def number_of_wheels
+        @number_of_wheels
+    end
+
+    def set_number_of_wheels=(number)
+        @number_of_wheels = number
+    end
+
+    def make_noise
+        "VRRRRUUUUM"
+    end
+end
+
+tesla_model_s = Vehicle.new(4, 'electric', 5, 250)
+tesla_model_s.make_noise
+
+# ===========Module===========
+
+# built-in
+Math::PI # > 3.141592653589793 
+Math.sqrt(9) # 3.0
+
+# implement our module
+module Skill
+  def average_speed
+    puts "My average speed is 20mph"
+  end
+end
+
+# using our module
+class RunnerAthlete
+  include Skill
+
+  def initialize(name)
+    @name = name
+  end
+end
