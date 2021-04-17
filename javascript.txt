@@ -149,3 +149,5 @@ this operator sets up new memory space (new address)
 (function(){}()) or (function(){})()
 
 : closure : makes sure that all the functions that where defined in different execution context have a reference access to that closure so if they need any variable from that closure they get it simply this way
+
+: let : when we have a loop in closure when we later want to get a variable inside that loop it is done and the last number is what we get but let is blocked scope and every time it points to a new place in memory so we don't have the closur problem with var
