@@ -123,6 +123,8 @@ Object.isFrozen(object)
 
 : infix notations : operators like + > < are functions but we use them different and sit between argumants
 
+: literal syntax of creation : [] , {} are literal and prefered way of creating array and object instead of new Object() or new Array()
+
 : Associativity : in operators which one assigns to another right to left (=+-) or left to right (typeof) or ( . in member access <)
 : coercion : because js is Dynamic Type it always converts values to each other
 
@@ -151,3 +153,38 @@ this operator sets up new memory space (new address)
 : closure : makes sure that all the functions that where defined in different execution context have a reference access to that closure so if they need any variable from that closure they get it simply this way
 
 : let : when we have a loop in closure when we later want to get a variable inside that loop it is done and the last number is what we get but let is blocked scope and every time it points to a new place in memory so we don't have the closur problem with var
+
+: bind('execution context [where our this is]' ) : makes a copy of our function and let us choose what environtemt variablble 'this' we want to pass if we pass arguments, it sets them permanently because again, bind is just making a copy of our function so it just takes 'this'
+
+: call('intended this', arg1, arg2) : unlike bind which just copies our function, call let us pass 'this' and argumants of the function to run it
+
+: apply(['intended this', all function parameters in one array]) : exactly like call but it gets an array of arguments more usefull for mathematical functions which get bunch of number in an array so you see passing numbers outside an array isn't really beautifull [1,35,32,21,8] vs (1,3,4)
+
+: function Currying : creating a copy of function with some permanent preset parameters (we do it by bind) which is usefull in mathematical situations
+
+#================= Prototypal inheritance 
+
+: Reflection : an object can look at itself and it's properties with hasOwnProperty("name of property")
+
+: prototype : every function has properties of 1- name 2- code (which is invocable) 3- prototype (used only by the 'new' operator) which is a prototype of any object that are made by new of this specific function that we used prototype for
+
+: every function that we intend to be function constructor( makes 'new' object for us) first letter of name must be capital 'new' makes an empty object for us that we can use later for prototypal inheritance
+
+: Built-in constructor functions " new Number() | String() | Date() these are objects and it isn't a primitive number or string 
+
+: extendign Built-in constructor functions : Number.prototype.isPositive = ()=> {return this > 0}
+
+: pure js prototypal inheritance : 
+let human = {firstname: "default",lastname: "default"}
+Object.create(Person)
+
+: polyfill : code that adds a feature which the engine may lack
+
+: Syntactic Sugar : a different way to type something that wont change whats happening under the hood
+
+: <target> instanceof <source-target> : finds if down the prototype chain the target is inherited from source target or not
+
+: Object.prototype.toString().call(<suspected array>) :  for checking array in old days way so it returns 'object array' instead of 'object
+: typeof null returns object which is an old bug in js : 
+
+: "use strict" " makes js engine to be more cautios and sensitive like creating a variable without var or let throws an error it can be just in a function so it won't rule globally 
