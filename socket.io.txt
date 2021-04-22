@@ -1,0 +1,29 @@
+const io = require('socket.io)()
+module.export =  io
+
+# another way is 
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+#in server listen file 
+
+io.attatch(server)
+
+# in server libraries
+io.on('connection', socket => {console.log('new user connected')})
+socket.on('disconnect', ()=> {console.log(`${socket.handshake.query.username} has left`)})
+
+# =================== in client side we add socket library as a cdn
+let socket = io({queyr: `username=${username}`})
+# by sending query when creating first connection on every emit we will have access to that data in this case username
+
+# sends request from client to server
+socket.emit('new user', {username: username})
+
+# when ever we emmit [fires event] we should have a counter io.on [listens for event] for it in other side
+
+# we have access to informations of socket by handshake
+socket.handshake.query.username
+
+# sends message to everyone exept the sender
+socket.broadcast('new message', {message: "hello", user: "ali"})
