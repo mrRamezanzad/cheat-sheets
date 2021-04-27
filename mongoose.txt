@@ -1,0 +1,29 @@
+Mongoose has 4 types of middleware:
+1-document middleware 
+validate
+save
+remove
+updateOne # by default are query hook we should convert them
+deleteOne # by default are query hook we should convert them
+init (note: init hooks are synchronous)
+
+#for converting to query hook and reverse
+schema.pre('remove', { query: true, document: false }, fn).
+
+2-model middleware
+count
+deleteMany
+deleteOne
+find
+findOne
+findOneAndDelete
+findOneAndRemove
+findOneAndUpdate
+remove
+update
+updateOne
+updateMany
+
+3-aggregate middleware
+fires when calling exec() on aggregate and 'this' refers to aggregation object
+ 4-query middleware
