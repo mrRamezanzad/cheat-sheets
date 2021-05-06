@@ -1,0 +1,111 @@
+# microservices 
+: pros :
+1- easy to scale 
+2- easy to test each service
+
+: cons :
+1- hard to orchestrate services on whole network
+2- hard to test the whole services
+3- cross service changes are hard (one change on a service may need multiple changes on others)
+
+# axios
+- result await axios.get('URL')
+
+# lerna is  a tool that helps packaging 
+# babel, react and bunch of other popular libraries use lerna
+- lerna init <package-name>
+
+
+: API Gateway : where client requests for different services
+# GraphQL : handles our api gateway for us so the client doesn't need a strong connection to request to multiple services
+ it's all about data and only returns what you asked for in copmarisson to REST API's that return all the data that you 
+ may not asked for
+ - books: {title, content}; author: {name, books};
+ - const data = await fetch('/', query)
+
+# AMQP : use it to connect into a message que in using microservices
+
+** neccessary tools for making microservices 
+- npm i express bodyparser grephql graphql-tools apollo-server-express
+: apollo-server-express : makes interacts of graphql with express very easy
+
+const {graphqlExpress, graphiqlExpress} = require('apollo-server-express')
+
+app.use('/graphql', graphqlExpress({schema})) 
+app.use('/gq', graphiqlExpress({endpointURL: '/graphql'}))
+
+const {makeExecutableSchema} = require('graphql-tools)
+
+const typeDefs = `
+    type Query { hey: String!},
+    type Mutation { hey: String!}
+`
+# the excalmation mark after String means it is required
+
+const resolvers = {
+    Query: {
+        hey: () => 'hey there'
+    }
+    Mutation: {
+        hey: () => 'hey there im a mutation'
+    }
+}
+
+# mapping types and resolvers together so we can use them
+const schema = makeExecutableSchema({
+    typeDefs, resolvers
+})
+
+# process.env.NODE_ENV : const {NODE_ENV} = process.env
+
+# Message Queue : it's just another microsevice that we use and it's useful so it works like
+  it gets a message and puts it in a queue of messages and tells the microservices that I have a message 
+  and if there are bunch of microservices, the one that is available takes the message
+
+: producer & consumer : api that creates the message is producer and consumers are microservices that take messages and do the job
+
+# in case of failed messages we configure RabbitMQ to keep a copy of message and when the consomer said work's done then clears it  
+: RabbitMQ : uses cloudAMQP which is a protocole like  https for RabbitM
+
+# we can use cloudamqp.com for RabbitQ online services
+
+- const amqp = require('amqplib/callbak_api')
+- const q = 'test_q'
+
+- ampq.connect(<connection-url>, (err, conn : connection :) => {
+    conn.createChannel((err, ch <chanel>) => {
+
+        ch.assertQueue(q #name of queue#,  {durable: true #keeps message until consumer says i'm done#})
+        ch.sendToQueue(q #name of queue that we want to send message into#, Buffer.from('Hello RabbitMQ)' #message content#)
+        # for consumer we do the same until createChanel then after that we put 
+            - ch.consumer(q, msg => console.log(msg.content.toString()), {noAck: true}) #no need to acknowledge that we are done
+        # in case of noAck: true we need to say  - ch.ack(msg)    to tell we are done with message
+        setTimeout(() => {
+            conn.close()
+
+            process.exit(0)
+        }, 1000)
+
+
+
+    })
+})
+
+# for sending email we use mailjet
+- npm i node-mailjet
+
+- const mailjet = require('node-mailjet')(apiPublic, apiSecret)
+
+module.exports = async mail => {
+    const request = await mailjet.post('send').request({
+        FromMail: 'sender@test.com',
+        FromName: 'sender name',
+        Subject: mail.subject,
+        'Text-part': mail.content
+        Recepients: [
+            {
+                Email: mail.receiver
+            }
+        ]
+    })
+}
