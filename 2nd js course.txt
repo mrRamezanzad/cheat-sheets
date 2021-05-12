@@ -1,0 +1,506 @@
+# scope is the current context of execution
+# var gets hoisted undefined 
+# let and constant won't get hoisted and from top to the initiation of let is named 'temporal dead zone'
+# let and constant won't be accessed from the global object directly
+
+# in nodejs global object is current module
+
+# block scope came in es6 and can be created using curley brackets but var still can be accessed from global scope
+even if it's defined in a block scope and we should use let instead 
+
+# hoisting of a function is higher than a variable ex: assigning a function then a text to a var and accessing it before 
+decleration gives us the function definition because of it's priority but after decleration we get 
+the last one thats been assigned to variable which in this case is text and inside function scope arguments has the lowest priority
+
+# function is an object that it's constructor is function constructor and has properties like:
+: .name : which gives functions name
+: .length : gives number of arguments
+: .arguments : getting arguments which outside of function is null because arguments are also 
+defined like a variable inside a function 
+arguments is an indexed object that apart from argument values it has things like:
+: callee : points to the function itself and it also can be alternative of functions name arguments.callee === myfunc //true
+when using anonymous function (not arrow function) we can make it recursive using callee
+arguments used to have a property named caller which is now part of function object and we can use it by callee.caller
+: caller : tells us where a function is being invoked ex: in global scope returns null if call the function (call not define)
+inside a function it returns the outer function
+caller does not support block scope and inside if statements is still null which means global
+: length : number of arguments
+: Symbol.iterator : is an API that enables the indexed object to work with for of   (we access arguments with numeric index)
+: __proto__ : prototype of arguments
+
+: this : points to the owner object 
+in a callback method it points to the window even if it's in an object and it causes problems
+it is because a callback function is just a normal function thats been defined in window 
+to solve it we use bind() at the end of callback method we can also use arrow function to solve this issue
+
+: .bind() : copies a function with the target object and we can put arguments in it call(obj, arg1, arg2)
+: currying : converting a multi argument function into series of single argument functions 
+: call & apply : like bind but they invoke the funtion and apply gets arguments in a single array
+: HOF (Higher order Functions) : they accept other functions as argument values or ruturn a function 
+like forEach, map, filter, setTimeout() which all get function as argument value
+
+# below is an example of currying to reduce validating the first number each time 
+and we used HOF to make this function into single argument functions
+function curryAdd (a) {
+    if (!Number.isInteger(a)) throw 'illegal 1'st arg. val'
+    return function(b) {
+        if (!Number.isInteger(b)) throw 'illgal 2'nd arg. val'
+        console.log(a+b)
+    }
+}
+
+let step1 = curryAdd(1)
+step1(3)
+step1(4)
+
+
+# before block scope we used closure to simiulate it 
+cluser needs : 1- parent function 2- child function 3- two returns
+
+: in arrow function : if there is just one line of code we don't put curley brackets
+and it will auto returns that line of code (if put brackets you should return manually)
+if wanna return object you should wrap it inside paranthesis msg => ({msg: "hello"})
+
+# arrow function doesn't have 'this' and inherits it just from it's outer function or method (not outer object)
+
+# second argument of forEach method lets us redirect 'this' of the callback like .bind()
+
+# in destructureng we can skip middle parts (one or more) and get others
+- let fruits = ['apple', 'orange', 'cranbarry']
+- let [first, , last] = fruits # 
+
+# we can destructure String as an array & object
+- let str = 'hello ; 
+[first, second, third] = str //first: h second: e third: l
+({length} = str)  // output: 5 # we use paranthesis to bypass error of not declaring variable 
+
+# Number can't be destructured as an array but can be used by its Object prototype
+# Boolan is like number but have limited object prototype methods (toString, value)
+# Null and doesn't have any object porototype either and can't be destructured
+
+#====================== map and set
+before ES6 we used array and object to store collection of data but no more with map and set
+: MAP : is an enhanced version of an object which has no restriction on key name types which gives more storage power
+and like array it remembers insetion order of it's key value pairs when adding and removing propeties is repeated scenario
+map is more efficient than object
+- let map = new Map([['fruit', 'apple'], ['vegan', 'celery']])
+- map.set('diary', 'milk').set('meat', 'beaf')
+- map.get('fruit') // output: apple
+- map.size() // output: 4 # returns number of key value pairs
+- map.has('vegan') // output: true
+- map.delete('vegan') // output: true
+- map.clear() # removes everything and gives us an empty map
+- map.set(false, 'false as value') # no type restiction of keys (null, undefined, NaN)
+
+# but if assign refrence values like array map.set([1,2,3], 'refrence val')
+we cant use map.get([1,2,3]) and we should do something like 
+- let arr = [1,2,3]
+- map.set(arr, 'refrence val')
+- map.get(arr)
+
+# by using spread operator we can turn a map into a 2D array
+- [...map]
+another alternative is:
+- Array.from(map)
+
+#===================== for of
+# works with iteratable types like string, array, array like objects, map & set
+: array like objects : are special objects that use numeric index a property name
+# for of on map makes it into pair of key value array but we can destructure it like 
+- for ( [key, value] of map){}
+- for (key of map.keys) # to just get keys
+- for (value of map.values()) # to just get values()
+- for (item of map.entries()) # gives us same result as map
+
+#======================= SET
+# is a simplified version of an array that has removed the indexing system thus it can't have duplicated data
+# no index, no duplicated value a collection of unique data
+# doesn't store keys but still remembers the insertion order
+- let arr = [1,2,3,1,2,3]
+- let set = new Set(arr)
+- set.add(4)
+- set.delete(4)
+- set.has(4) // output: false
+- set.clear()
+
+# set can be turned into array 
+- [...set]
+- Array.from(set)
+# it also has methods of .keys(), values() & entries() but there is no logic in using them 
+
+# application of set is in merging arrays with duplicated data
+- let merged = [...new Set([...arr1, ...arr2])]
+
+#========================= Symbol
+# to help us avoid naming collision the 7'th primitive data type came by ES
+# Symbol has one purpose which is serving as property name in an object
+- let s1 = Symbol(['a description or tag to identify symbol']) # it's very important that we just invoke it and not newing it
+- s1.description() # to get it's description
+
+# every invocation of symbol will give us a unique value and they are not a symbol wrapper object and thus we don't get any 
+auto complete suggestion they are just have a __proto__ property that points to symbol wrapper object(Symbol.prototype)
+- let s2.Symbol()
+- s☺1 === s2 // output: false
+
+- Symbol.for('apple') # is another alternative to create symbol which gets a key
+# symbol.for difference is it looks for key and if it has been before it just points to that in the next repeats ex:
+- sf1 = Symbol.for('apple)
+- sf2 = Symbol.for('apple')
+- sf1 === sf2 // output: true
+
+# to get key value of symbol
+- Symbol.keyFor(sf1) // output: 'apple'
+
+# as symbol is a computed value we must put it inside square brackets []
+- let collection = {
+    a: 1,
+    b: 2, 
+    [Symbol(c)]: 3
+}
+
+# Symbol will be put inside the object but will not show inside output of for( in ) because symbol properties are not enumerable
+
+# to get symbols of an object we only can use: 
+- let allSymbols = Object.getOwnPropertySymbols(collection)
+- console.log(collection[allSymbols[0]])
+
+# string, array, map & set can be used by for ( of ) because they all have Symbol.iterator in their prototype
+which is an api function that works with for ( of ) in array it points to the values() method
+we can't use objects with 'for of ' because they do not have Symbol.iterator to enable this api
+
+# js wanted to add an api to str, map, set & array to make them iteratable but also wanted to give developers the freedom 
+to choose names in prototype without collision of names so they name it as a Symbol 
+and put this api inside iterator property of Symbol function  the Symbol.iterator is one of the well known symbols ()
+
+: well known Symbol : symbol values stored in properties of the Symbol function that js uses them to name certain built-in
+api methods or properties
+
+# trick to get only keys or values in 'for of' by setting it's iterator to 
+- Map.prototype[Symbol.iterator] = Map.prototype.values
+- Map.prototype[Symbol.iterator] = Map.prototype.keys
+
+# ========================================= Iteration Protocoles
+
+1- iterable protocole (is for objects) 
+
+# iterable protocol demands object to have a function names Symbol.iterator which can't have arguments and must return 
+an object(iterator object) 
+
+2- iterator protocol # rules for iterator object
+
+it should have next() method that must return an object with atleast two properties 
+
+1- done (boolean)
+true means every value of the sequence has been output and iteration has reached an end
+false means there are still values left in the sequence
+
+2- vlaue
+
+# we can run next() method manually which gives us elements one by one till end but it's very desirable to 
+use it with 'for of' to make this process auto
+# if we run next() manually the 'for of' will return undefined because the next() is done already
+
+# =============our custom iterator=============
+let arr = ['a', 'b', 'c']
+
+arr.prototype[Symbol.iterator] = function () {
+    let that = this
+    let index = 0
+
+    return {
+        next() {
+            return {
+                if (index < that.length) {
+                    return {
+                        value: that[index++].toUpperCase(),
+                        done: false
+                    }
+                } else {
+                    return {
+                        value: undefined,
+                        done: true
+                    }
+                }
+            }
+        }
+    }
+}
+
+# =============== Generator object
+conforms to both iterabale and iterator and can work with 'for of' and 'next' method
+
+# an array is not iterator but is iterable and we can do something like
+# entries(), values() & keys() are both iterable and return iterator
+let arr = ['a', 'b', 'c']
+let entries = arr.entries()
+
+# so we can use entries by next()
+arr.next() // output: error
+entries.next() // output: a 
+
+entries === entries[Symbol.iterator]() // output: true
+
+# === generator function 
+# they can be exited and re-entered without loosing data (variable bindings will be saved across re-enteraces)
+saving this functions context is a very important job of the 'generator object'
+- function* generator (i) {
+    yield i;
+    yield i+10
+    # we use yield to divide function body into chunks 
+    # the value behind yield will be output by next() method
+}
+
+# when invoking generator function the body won't run and it just returns an iterator object
+and every time we use next() a chunk of body will execute
+
+# what you put behind yield will be assigned to the 'value' property of iterator
+
+# '.return()' will end the iteration in cases like wrong id or something we wanna use
+generator.return('a message to put inside value') // output {value: 'a message to put inside value', done: true}
+
+# alternative to end iteration ahead of time is to use throw method 
+generator.throw(new Error('something is wrong))
+
+# if we want to catch error we should put our yeilds inside 'try catch' 
+and the generator must be next() atleast once for it to catch
+
+# .next() method can also get argument to put inside 'value' property but must make sure that 
+won't pass any argument until the first next() is called and initiated the variable
+
+# in the way ahead we use variables as placeholders after initation to get the arguments
+function* customizeMyCar(obj){
+    let brand = yield 'customize my car'
+    obj.brand = brand
+    let model = yield 'brand added'
+    obj.model = model
+    let engine = yield 'model added'
+    obj.engine = engine
+}
+
+# ============= yield
+with astrisk behind the yield it can handle an out put iterables
+- yield* [1, 2, 3] // output: 1 \n 2 \n 3
+- yield* generator() // output: output code chunks (yields) of the generator function whick returns an iterable     
+
+#===================== Promises
+promise: is an object that represent the execution result of an asynchronous operation
+
+# promise.prototype has built-in methods of .then(), .catch(), .finally()
+
+: promise.length property : always returns '1' which is numbers of arguments that a promise constructor  needs 
+'a callback' that we call it here 'executer function'
+
+: promise states : 
+1- pending : is initial state 2-fulfulled: async operation is succeed 3-rejected failed
+
+# fulfill and reject are alson called 'settled promise' and once it's settled the finally() will trigger
+
+# browser alternative names for promise terms
+promise state == PromiseStatus
+fulfilled state == ResolvedStatus
+success value == PromiseValue
+
+: failure reason : the value that we pass to reject() function
+
+: onFulfilled : the name of callback on 'then()' method
+: onRejected: the name of callback on 'catch()' method
+: onFinally: the name of callback on 'finally()' method
+: success value : what we pass to resolve() function
+: failure reason : what we pass to reject() function
+
+# we can remove catch method because it's just a shortcut for: 
+promiseFunction.then((res, rej)=>{}, (err)=>{console.log(err )})
+
+: thenable object : is an object with a method under the name 'then' it only works with the resolve function
+po = function() {
+    new Promise((resolve, reject) => {
+        resolve({
+            then((resolve, reject) => {
+                console.log('this is from thenable object which is promise still pending until this returns answer')
+                reject('the object wants to answer reject for example')
+            })
+        })
+    })
+}
+
+# best way to run multiple promises together is to put them in array and iterate over that by 'for of' or 'forEach'
+
+# to find fastest promise we use Promise.race([p1,p2,p3]) which is owned by promise constructer and
+it takes iterable as argument value and returns just the first settled promise
+
+Promise.allSettled : waits for all promises to respond and returns a resolved promise with Promise value that is 
+an array of settled promises then we can do whats next by attaching .then() to it
+
+: Promise.all([p1,p2,p3]) : use it when we want all promises get resolved and we can control the output order of promises
+in case one of promises of Promise.all() gets rejected the output will just be the rejected promise
+
+# javascript callbacks are treated in non-blocking way 
+for example if we have console.log before and after setTimeout, the logs print and whenever the time comes 
+the log in setTimeout prints
+
+#======================= Reflect Obj
+13 static methods that intercept(prevent, stop) javascript operations
+reflect is not a constructor so we cant new or invok it
+methods:
+1- Reflect.apply(): is an alternative to Function.prototype.apply() we implement it:
+Reflect.apply(func, targetObj, [arg1, arg2])
+
+2- Reflect.has(obj, 'property'): replaces 'in' operator
+: in operator : check if an object has some property or not  ``` 'title' in obj // output: false ```
+
+3- Reflect.deleteProperty(obj, 'property')
+: delete operator : to remove a property from an object ``` delete obj.id // output: true```
+
+4- Reflect.construct(obj, [arg1, arg2]): replaces the 'new' operator and returns us an object
+5- .defineProperty() 
+6- get: ƒ ()
+7- getOwnPropertyDescriptor: ƒ getOwnPropertyDescriptor()
+8- getPrototypeOf: ƒ getPrototypeOf()
+9- isExtensible: ƒ isExtensible()
+10- ownKeys: ƒ ownKeys()
+11- preventExtensions: ƒ preventExtensions()
+12- set: ƒ ()
+13- setPrototypeOf: ƒ setPrototypeOf()
+14- Symbol(Symbol.toStringTag): "Reflect"
+
+#========================== PROXY
+use it to define custom behaviour for fundamental operations
+in other words we can customize JS at language level
+
+PROXY Terminology:
+1- handler: object that contains traps
+2- traps: methods that we use to intercept user operations and redefine the results of user operations
+    has 13 methods named like reflect methods
+3- target: the Object, funciton or constructor which PROXY virtualizes it (we want to PROXY)
+
+- var p = new Proxy(target, handler)
+
+#================= trap methods
+let car = {
+    engine: 'petrol',
+    gearbox: 'manual',
+    _id: 1984
+}
+
+let carProxy = new Proxy(car, {
+    get(car, property, receiver) {
+        # receiver points to the carrent proxy object or the object that uses proxy as its prototype
+        
+        if (property === 'engine') {
+            return target[property].toUpperCase()
+        } else if( property === 'receiver') {
+            return receiver
+        } else {
+            return 'access denied ...'
+        }
+    }
+}
+
+let newObj = Object.create(carProxy)
+
+# in real life we use GET trap to make private properties
+
+# inside handler object
+- {
+    get (target, property, receiver) {
+    
+    if (property[0] === '_') return 'access denied'
+    target[property]
+  },
+  set (target, property, value, receiver) {
+      if (property[0] === '_') throw 'You cannot set this property'
+      target[property] = value.toUpperCase()
+  }, 
+
+   has (target, property) {
+       if(property[0] === '_') return false
+       Reflect.has(target, property)
+   },
+
+   deleteProperty (target, property) {
+       if (property[0] === '_') return false
+       Reflect.deleteProperty(target, property)
+   }
+}
+
+#* ================ important : when using proxy as object prototype be carefull about 'traps' because child will inherit them
+# when we create an object from a Proxy the obj.__proto__ will not give us the rusult that we want 
+it either points to simple Object prototype or gets restricted by our 'get trap'
+so to solve this always use: 
+- Object.getPrototypeOf(obj)
+    or
+- Reflect.getPrototypeOf(obj)
+
+# also when adding property to the child object from Proxy the property will add to proxy and not the child object
+because of our 'set trap' to solve this we should use:
+- Object.defineProperty(obj, 'propName', {value: 'propValue'})
+    orz
+- Reflect.defineProperty(obj, 'propName', {value: 'propValue'})
+
+# ==================== defineProperty()
+properties has decriptor that we can control them in proxy and also when defining property by defineProperty() ex:
+
+let proxy = new Proxy({}, {
+    defineProperty (target, prop, descriptor) {
+        # must return a boolean but false won't intercept for not saving
+        descriptor.configurable = true  // must be allways true when adding in both sides( 1- trap 2- defining property outside trap)
+        descriptor.enumerable = true/false
+        descriptor.value = 'changed the value that use sent to something else'
+        descriptor.writable = false
+        Reflect.defineProperty(target, prop, descriptor)
+
+    }
+})
+
+- proxy.msg = 'hello'  // this will set all descriptors true
+
+Object.defineProperty(proxy, 'msg', {
+    configurable: true // must be true otherwise we'll get error`,
+    writable: false,
+    enumerable: true,
+    value: 'hello'
+})
+
+
+#============ apply() trap
+intercepts the apply() call on a proxy, it also affects the call()
+insie the apply trap this_argument is undefined
+{
+    apply (target, this_arg, arg_list) {
+        this_arg = {title: 'hello'}
+        arg_list[0]++
+        arg_list[1]++
+        return target.apply(this_arg, arg_list)
+    }
+}
+
+
+#================ construct() trap
+# a constructor can have three types of property: -instance -prototype -static
+# new_target helps us to create static properties in proxy and not the instanced object
+# having arguments list in proxy helps keeping data validation outside of constructor
+
+{
+    construct (target, arg_list, new_target //points to proxy object) {
+        new_target.static_prop = 'static property'
+        arg_list[0] = arg_list[0].toUpperCase()
+        let obj = new target(...arg_list)
+        obj.id = 1984
+
+        return obj
+    }
+}
+
+#==================== Revocalbe Proxy
+making a proxy that can be revoked(removed and get unaccessible)
+make new proxy is by default revocable: false
+to make it revocable:
+
+let revocable = Proxy.revocable(target, handler) // this gives back an object that has -revok & -proxy in it
+
+let proxyObj = revocalbe.proxy
+
+revocalbe.revoke() 
+#when we revoke tha proxy object still exists
+but it's Target and Handler will remove and IsRevoked will change to true and we can't use proxy anymore
+

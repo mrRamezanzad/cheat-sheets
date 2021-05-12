@@ -1,0 +1,52 @@
+#============== Dynamic Programming:
+eliminating the need for recursive calling by storing the results of the previous sub-function
+algorithms that fall into this category:
+    1-Ugly Numbers 2-Fibonacci Numbers 3-Binomial Coefficient 4-Permutation Coefficient
+
+#=========== Binary Search:
+gets sorted array and a search key
+works by selecting and comparing search key to middle element and if key is smaller goes to the right otherwise left
+
+- Depth First Search (DFS): O(V + E) number of vertices and edges in the graph
+starts search from node and goes down to the leaf of leftmost branch leaf then starts backtracking right side of tree 
+and so on * it's issue is if a there is a cycle the proccess gets repeated
+
+- Breadth-First Search (BFS): O(V + E) number of vertices and edges in the graph
+ starts from the root just like DFS but searches in the neighbourhood of the node on the same level
+ after traversed is done, algorithm goes to the next level and keeps on until finds element
+
+#========== Sorting Algorithms
+- Merge Sort: O(n log n)
+based on principles of divide and conquer algorithm(dividing a problem into smaller parts and merge at the end)
+divides array in half calls sort function on the two halves and then merges them by merge function
+
+- Quick Sort: O(n^2)
+like merge it's based on divide and conquer algorithm with difference of not merging
+selects last element in array as pivot and puts it in middle (right ones are biggers left ones smallers than pivot number)
+then sorts each two parts again
+
+#=============== Data Structure
+- Hash Tables: O(1)
+a type of data structure used to store, access, and modify data
+uses Hash function to map a given value to a specific key then the key is used to retrive those values quickly
+
+- Linked Lists
+Usually, the components of an array or any linked data structures are stored in contiguous (adjacent) memory locations
+whick takes space and parts of memmory won't be accessible
+linked list data structure overcomes this by not saving contiguous and every item in the list has a pointer 
+that shows next elements location in memmory.
+
+========================= Questions
+- swap without temp: add and minus them from eachother
+
+- what is Dijkstra's shortest path algorithm: 
+finding the shortest path from a starting node to the target node in a weighted graph
+finds by avoinding edges with large weights
+
+- examples of Divide and Conquer algorithm?
+Merge Sort
+Quick Sort
+Binary Search
+Strassen's Matrix Multiplication
+Closest pair (points)
+ 
