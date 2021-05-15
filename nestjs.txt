@@ -1,0 +1,116 @@
+nestjs: a framework butlt on top of express with cool feature like:
+1-Empraces TypeScript 2-Dependency Injection 3-Modularity (Angular for back-end)
+
+- npm i -g @nestjs/cli
+
+# nest commandOrAlias requiredArg [optionalArg] [options]
+- nest new --dry-run <project-name>
+    By Alias
+- nest n <project-name> -d 
+
+# what comes from nestjs is important to put '@' before it as a decorator :
+decorators can be attached to classes, methods of classes, properties, arguments
+@Module is a decorator that should be attached to a class
+import {Module} from '@nestjs/common'
+
+@Module({
+    imports: [],
+    controllers: [AppController],
+    providers: [AppService]
+})
+
+export class AppModule {}
+
+
+#================= @Controller decorator 
+# turns a class (attaches to a class) into a controller, we also
+
+import {Controller} from '@nestjs/common'
+
+@Controller('products')
+export class ProductsController {
+
+    @Post()
+    addProduct(): any {
+        return {
+
+        }
+    }
+}
+
+#================== @Injectable() decorator
+# makes our service class injectable
+
+import {Injectable} from '@nestjs/common'
+import {Product} from './product.model'
+
+@Injectable()
+export class ProductService {
+    products: Product[] = []
+}
+
+
+#=================== simple model class in TypeScript
+
+export class Product {
+
+# by defining accessors for constructor args typescript auto generates properties for us
+# otherwise we have to define them ourselves in case of not defining modifiers
+
+    constructor(
+        public id: String,
+        public title: String,
+        public description: String,
+        public price: Number
+    ){}
+
+    VS
+    
+    id: String
+    title: String
+    description: String
+    price: Number
+
+    constructor(id: String,title: String,description: String,price: Number){
+        this.id = id
+        this.title = title
+        this.description = description
+        this.price = price
+    }
+}
+
+#=================== Nestjs cli
+generate (g): and/or modifies files based on a schematic.
+add: Imports a library that has been packaged as a nest library, running its install schematic.
+update (u): @nestjs dependencies in the package.json"dependencies" list to their @latest version.
+info (i): information about installed nest packages and other helpful system info.
+
+Generate Schematics: 
+
+      |  name         │ alias       │ description                                  │
+      │ application   │ application │ Generate a new application workspace         │
+      │ class         │ cl          │ Generate a new class                         │
+      │ configuration │ config      │ Generate a CLI configuration file            │
+      │ controller    │ co          │ Generate a controller declaration            │
+      │ decorator     │ d           │ Generate a custom decorator                  │
+      │ filter        │ f           │ Generate a filter declaration                │
+      │ gateway       │ ga          │ Generate a gateway declaration               │
+      │ guard         │ gu          │ Generate a guard declaration                 │
+      │ interceptor   │ in          │ Generate an interceptor declaration          │
+      │ interface     │ interface   │ Generate an interface                        │
+      │ middleware    │ mi          │ Generate a middleware declaration            │
+      │ module        │ mo          │ Generate a module declaration                │
+      │ pipe          │ pi          │ Generate a pipe declaration                  │
+      │ provider      │ pr          │ Generate a provider declaration              │
+      │ resolver      │ r           │ Generate a GraphQL resolver declaration      │
+      │ service       │ s           │ Generate a service declaration               │
+      │ library       │ lib         │ Generate a new library within a monorepo     │
+      │ sub-app       │ app         │ Generate a new application within a monorepo │
+      │ resource      │ res         │ Generate a new CRUD resource                 │
+      │ pipe          │ pi          │ Generate a pipe declaration                  │
+      │ provider      │ pr          │ Generate a provider declaration              │
+      │ resolver      │ r           │ Generate a GraphQL resolver declaration      │
+      │ service       │ s           │ Generate a service declaration               │
+      │ library       │ lib         │ Generate a new library within a monorepo     │
+      │ sub-app       │ app         │ Generate a new application within a monorepo │
+      │ resource      │ res         │ Generate a new CRUD resource                 │
