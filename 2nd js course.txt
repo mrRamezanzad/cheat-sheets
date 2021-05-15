@@ -1,4 +1,6 @@
-# scope is the current context of execution
+Node.js is single-threaded but in the background it uses multiple threads to execute asynchronous code 
+with the help of the libuv library.# scope is the current context of execution
+
 # var gets hoisted undefined 
 # let and constant won't get hoisted and from top to the initiation of let is named 'temporal dead zone'
 # let and constant won't be accessed from the global object directly
@@ -503,4 +505,220 @@ let proxyObj = revocalbe.proxy
 revocalbe.revoke() 
 #when we revoke tha proxy object still exists
 but it's Target and Handler will remove and IsRevoked will change to true and we can't use proxy anymore
+
+
+#=========================json
+JSON.strigify() & JSON.parse() alternatives are qs.strigify() & qs.parse()
+
+#================= CommonJs 
+it's a community developed js modular solution to break file into different files and 
+link them back together and it's current default for nodejs but future is 'import export'
+the other solution are : 
+requirejs which is built on AMD(Asynchronous Modular Definition) 
+in china there is CGS which conforms to CMD(Common Modular Definition)
+those are all community developed Unlike ES6 'import export'
+import exoprt is official way of es6 for modularity
+
+#================ 'require' properties
+: resolve : 'require.resolve('./mymodule')' returns absolute path of the module that we are exporting
+'require' has it because it always converts our relative paths to absolute and uses that
+
+: main : it is the current module that we are calling require in it so thus: 
+require.main === module // output: true
+
+: cache : it chaches the required modules so when we repeat the require it won't do the repeated work and brings it 
+from cache it stores an object of current module and required module and the exported module is cached there for example 
+there is chache property that has :
+- require.cache.<absolute path of current module>
+- require.cache.<absolute path of required module>
+
+and we can access the cached like this
+- require.cache[require.resolve('./myModule')].exports
+
+and we can change or delete to get updated module
+- require.cache[require.resolve('./myModule')].exports = 'new value'
+- delete require.cache[require.resolve('./myModule')].exports = 'new value'
+
+#* NODEJS treats every js file as a module  
+
+#====================== 'module' properties
+: id : absolute address of file which for current file is ' . ' dot
+: children : array of all modules that are included in current file
+- module.children[0].exports
+# this is how 'require' accesses exports of a linked file
+
+# circular dependency: in computer science it's a bad word and often it's an infinite loop 
+but in requiring two files in eachother there won't be a problem because it won't get executed twice 
+
+- require('./a')
+- require('./a')
+# just runs 'a' module once
+
+#===================== 'import export'
+1- import gets hoisted thus the code in imported module runs before current file that imports it
+2- must always declare it at the top and can't be inside funtion or if statement (gives us error`)
+
+: import function :  to import based on conditions we can use import function 'import()'
+import function won't be hoisted and returns a promise
+
+: export : must be defined at top level (not inside function or statements) and has to types:
+1- named export 2- default export
+
+in named export: 
+every value is exported with a name (function, class, variable), we can add as many named exports we want in a file
+# when using named exports we should import it by curly brackets
+
+# we cannot directly export a variable or constant and should put it inside curly brackets
+let msg = 'hello'
+export {msg as word}
+export let msg = 'hello', id = 1984
+import * as obj from './b'
+
+# to use enable ES6 modules in nodejs
+
+1-rename file extion to '.mjs'
+2- adding flag of experimental-modules
+- node --experimental-modules a
+
+2- default export:
+in named export we have to know the name of exported things but in default we don't have this problem
+but we can just have one default export in one module and if we need to export multiple we should put them 
+in an array or an object
+
+- export default [msg, id]
+
+# we can directly export a value like string or number 
+
+export default 1984
+
+# we can also define it like: 
+- export {msg as default}
+
+#* export default sends the dynamic refrence of current value of variable
+but named export sends dynamic refrence of the variable 
+so if the variable gets changed we can have the change in the file we import it
+- export let num_b = 0
+- num_b++
+
+#============ import export in browser
+first we should have the html run by a bundler(babbel, webpack) or a web server then:
+
+<script type='module'>
+    import {msg} from 'myModule.js'
+    # better to keep file extensions while using in web browser
+</script>
+
+# if using module function there is no need to define the script as module because it returns a promise
+<script>
+    import('./myModule')
+    .then((value)=> {
+        console.log(value.msg)
+        #if export by default we use it like:
+        console.log(value.default)
+    })
+</script>
+
+# ================ Strict mode
+for enabling:
+1- make type module in script tage makes it Strict
+2- using 'use strict' string
+3- importing files into each other make auto strict mode by ES6
+
+# we can not make block scope to strict mode it just works with function scope or global scope
+
+# under strict mode we can't:
+1- get global variables whitout pointing to it :
+console.log(window.a )
+
+2- this inside a function won't refrence to global unles we call function like:
+window.myfunc()
+
+3- deleting a global variable by 'delete' operator is illegal and throws error 
+but without strict it's ok but just won't delete
+
+4- can't call a function which is declared inside block scope (like if) from outside a block scope 
+
+5- when using Octal numbers we should put 'O' behind(after) starting zero
+let num = 0o123
+
+#================= __proto__
+obj.constructor.prototype == obj.prototype // output: true
+obj.__proto__ == Object.prototype // output: true
+
+#* if we want an object that is truly empty:
+let myObj = Object.creat(null)
+
+# if a function doesn't need argument the paranthesis will be optional when newing it
+
+#================== Object constructor
+create object wrapper for a given value
+
+: object wrapper : which gives the primitive types ability to inheritance their special methods
+
+# Object methods
+Object.entries: turns an object into a 2D array first one is key second one is value
+Object.keyst: gives array of keys
+Object.values: gives array of values
+Object.fromEntries(): transform back 2D array from 'entries method' to an object
+Object.is(): check if two objects are pointing to same object or not
+
+# we can set prototype by:
+- obj.__proto__ = anotherObj
+- Object.setPrototypeOf(obj, anotherObj)
+
+# getting portotype of an object
+- Object.getPrototypeOf(obj)
+
+#creating an object with from custom prototype
+Object.create(customProtyObj, opionalPropertyAttributes)
+: property attributes : 
+1-value: value of property; default: null
+2- enumerable: working with 'for in'; default: false
+3- writable: changing value; default: false
+4- configurable: can we modify other property attributes, property value or delete property; default: false 
+
+#expanding object (adding properties)
+Object.assign(obj, {name: "Tom"})
+
+# creating object in defferent ways are important:
+- Object.create({msg: 'hello'}) // creates an object that inherits msg and it's not part of it
+- new function(){this.msg = 'hello'} // creates an object which owns msg property
+
+# Object.getOwnPropertyDescriptor(targetObject, propertyName) : gives descriptors (property attributes)
+of a property just in target object (because of Own ) not the inherited ones
+
+- getOwnPropertyDescriptors(obj): gives all properties descriptors
+
+# defining property 
+- Object.definePropery(targetObj, propertyName, {
+    value: 2000,
+    enumerable: true
+})
+
+- Object.defineProperties(targetObj, {
+    color: {
+        value: 'blue'
+    },
+    location: {
+        value: 'iran'
+    }
+})
+
+# preventing Object from getting new property
+preventions are leveled soft to hard:
+1- Object.preventExtensions(obj); soft
+still can add to prototype chain and the object will inherit that
+
+2- Object.seal(obj); hard
+like prevent but changes configurable property attribute of all own properties to into false
+and we can change the value of property but we can't change the properties of it's prototype 
+- Object.isSealed() // output: true
+- Object.isExtensible() // output: false
+
+3- Object.freeze(obj); medium
+doesn't allow any changes
+- Object.isFrozen(obj) // output: true
+- Object.isExtensible(obj) // output: false
+# we can still change the prototype and the object will inherit from it
+
 
