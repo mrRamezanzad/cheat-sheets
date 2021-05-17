@@ -721,4 +721,279 @@ doesn't allow any changes
 - Object.isExtensible(obj) // output: false
 # we can still change the prototype and the object will inherit from it
 
+#=================== Accessor Property two-way data bining
+getter & setter : using them to retrive and set properties value
+they are defined as methods but used as properties:
+let obj = {
+    msg: "this is message property",
+    
+    get access_msg () {
+        return this.msg
+    },
+    set access_msg (arg) {
+        this.msg = arg
+    }
+}
+
+USAGE:
+- obj.access_msg
+- obj.access_msg = 'new message value'
+# if call it as function we get an Error
+
+another way to define accessors:
+
+Object.defineProperty(obj, access_msg, {
+    get(){return this.msg},
+    set(arg){this.msg=arg},
+    enumerable: true,
+    configurable: false //because no one should be able to change accessors
+})
+
+#================== constructor
+if we do Object.create(obj) from an object the new object will inherit the properties
+if we want the properties be a part of new object we should use constructor object
+
+# there are some types of properties:
+1- Instance Properties: owned by the new object
+2- Prototype: inherited by new object (mostly use to define props with costom attributes/accessors)
+3- Static: won't be passed to the instance object at all
+4- private properties: just inside constructor has access to it
+and just constructor has access to it like all the variables 
+that are defined inside a constructor function (can't get it by obj.prototype or obj.constructor properties)
+
+# first letter of constructor must be capital by convention
+let Car_constructor (engine, gearbox) {
+    this.engine = engine // example of instance property
+    this.gearbox = gearbox
+    this.start = function () {
+        console.log('engine on...')
+    }
+    this.rev_engine = function () {
+        console.log('vroom... ')
+    }
+
+    let msg = 'hello' // example of private property
+}
+
+# to define properties that just are inside portotype
+example of prototype properties:
+Object.defineProperty(Car_constructor.prototype, 'mileage', {
+    value: 1000,
+    enumerable: true,
+    writable: false,
+    configurable: false
+})
+
+: static properties : they are defined just inside constructor and instance object won't affect them
+Car_constructor.location = 'NewCastle
+
+# to access it we must access it either by constructor property of instance object 
+or setting an accessor property for it
+- car_obj.constructor.location
+
+let car_obj = new Car_constructor('Hybrid', 'Automatic)
+
+# another way to define these different properties:
+1- instance: this.msg = 'hello'
+2- prototype: this.__proto__.msg = 'hello'
+3- constructor(static property): this.constructor.msg = 'hello'
+
+# it's recommended for better performance to define just instance porperties inside 
+constructor functoin and define others outside function body seperately
+
+#================ class
+in ES6 class is just a syntax sugar and 'type of class' just returns a function 
+which is like a constructor function but unlike function the class decleration won't be hoisted
+so we can't new a class before it's decleration
+- typeof myClass // output: function
+
+# two ways to define class : 
+1- Declaration
+- class myClass{}
+
+2- Expression 
+# this way helps keeping code clean and concise
+- let myClass = class{}
+
+#* important difference of class and constructor function:
+constructor functions 'writable' description is true 
+which means we can reset prototype of our newed object or add to it
+but in class the writable descriptor in prototype of newed object is false
+- myClass.prototype = {test: 'this won't add to prototype'}
+
+# it can be an improvement that is brout by class to protect the prototype of instanced objects
+
+# type of methods in a class:
+1- instance methods: //also named full syntax
+- let start = function () {console.log(this.engine + 'is on...')}
+
+2- property method: //also named shorter syntax
+- rev_engine () {console.log(this.engine + 'vroom...')} // must define without function keyword
+
+3- static methods: // can be defined with either full or shorter syntax
+- static shut_engine () {console.log(this.engine)}
+
+# we can also add getter and setter in class
+- get access_engine () {return this.engine}
+- set access_engine () {this.engine = arg}
+
+# =========== Field
+is a stage 3 experimental feature which are values that won't need user submission
+and has two types:
+1- public:
+- plateOfCar = 'NE19 HA0'
+
+2- private: starts with a hashtag
+it can only be accessed by methods of class or accessors
+- #id = 100
+
+# problems of fields
+1- it's still experimental
+2- it shows private fields by logging instance object
+
+# the best way to keep some private information is to define variable inside 
+constructor function so it's only visible by constructor function and wont be 
+passed to instanced object
+
+class myClass {
+    constructor() {
+        let myHiddenValue = 1000
+# to access it define a method that returns it \
+        this.access_myHiddenValue = function () {return myHiddenValue}
+    }
+}
+
+# Class extensions
+: super method : is like a bridge from child class constructor to parent class constructore
+
+# we can use super to extend a method from parent class but 
+we can't extend instance methods by super this way we can protect our method 
+and use it to make sure that child class either uses instance method or completly replaces it
+- child_instance_method(){super.instance_method()} // returns error
+- child_prototype_method(){super.prototype_method()}
+- child_static_method(){super.static_method()}
+
+# we can add functionality to types like 'Array' by creating child class from them 
+class myArray extends Array{}
+
+there comes a problem when using special methods like 'map' that returns new array 
+to fix that we can use:
+static [Symbol.species] () {
+    return Array
+}
+# but this trick won't work on methods that change directly and won' return new array(like [2,3].reverse() method)
+
+#* to prevent a constructor function being called without new we use target:
+function Car (brand, model) {
+    if (new.target) {
+        this.brand = brand
+        this.model = model
+    } else {throw new Error('Car is a constructor , new it !!!)}
+}
+
+: new.target : will points to the target that is behind keyword new
+
+#* we can also use new.target feature to protect parent class from being newed
+class Child_class extends Parent_class {
+    constructor(){
+    if(new.target === Parent_class) throw 'Parent class cannot be newed!!!'
+    this.brand = 'Petrol'
+    }
+}
+
+: Mixin : mixing properties and methods from different classed and constructors into one class
+extends in classes is a way of Mixin
+
+- class Car_basics {
+    constructor() {
+        this.brand = 'Toyota'
+        this.model = 'Camry'
+    }
+}
+
+- function Petrol_engine (cls<target-class-to-change-it's-constructor>) {
+    return class extends cls {
+        constructor() {
+            super()
+            this.engine = 'Petrol'
+        }
+    }
+}
+
+- function Hybrid (cls<target-class-to-change-it's-constructor>) {
+    return class extends cls {
+        constructor() {
+            super()
+            this.engine = 'Hybrid'
+        }
+    }
+}
+
+- function Automatic_gearbox (cls<target-class-to-change-it's-constructor>) {
+    return class extends cls {
+        constructor() {
+            super()
+            this.gearbox = 'Automatic'
+        }
+    }
+}
+
+- function CVT_gearbox (cls<target-class-to-change-it's-constructor>) {
+    return class extends cls {
+        constructor() {
+            super()
+            this.gearbox = 'CVT'
+        }
+    }
+}
+
+# USAGE:
+- let targetClass = Automatic_gearbox(Petrol_engine(Car_basics))
+- let car = new targetClass
+
+#=========================== Data Structure
+science of storing and managing data
+
+Queue: helps stack manage unexecuted tasks
+follows FIFO principle
+enqueue: adding to Queue
+dequeue: removing from queue
+front pinter: points to first task in queue in other words
+task that is being pointed by front pointer will be executed first
+rear pointer: points to last task in queue
+
+Stack: area that tasks are executed and completed
+opposite of Queue follows LIFO principle
+
+frame: refers to stack tasks
+push: adding to stack
+pop: removing from stack
+
+# bottom of stack is fixed so we only need one pointer to manage it called 'top pointer'
+
+Heap: unordered area of memory where elements are added or removed in any order(fifo, lifo) 
+so we never manage tasks using heap but this feature(unorder) gives lots of felexibility in terms of data storage
+we use heap to store objects because their size are often unpredictable
+
+** javascript is a single-thread language
+process: execution of an entire program
+thread: entitiy within a process
+one process is made of several threads
+
+for better performance js fakes or simiulates the behaviour of a multi-thread language 
+synchronous code: these tasks are blocking and executed in the same order they are defined
+asynchronous code: they will be skipped and executed later
+
+#======================== how js does async
+to make sure skipped code won't be forgotten
+js adds it to 'task queue'
+after all synchronous codes are executed js goes to task queue 
+and clears it by FIFO but if the result is not ready it will be skipped
+
+#======================== Micro & Macro tasks
+micro task queue has higher priority than Macro task queue
+and micros will be executed before macro ones
+    
+a callback in a setTimeout() is a Macro task
+.then(), .catch() & .finally() methods are Micro tasks
 
