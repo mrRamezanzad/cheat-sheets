@@ -993,7 +993,172 @@ and clears it by FIFO but if the result is not ready it will be skipped
 #======================== Micro & Macro tasks
 micro task queue has higher priority than Macro task queue
 and micros will be executed before macro ones
-    
+
 a callback in a setTimeout() is a Macro task
 .then(), .catch() & .finally() methods are Micro tasks
 
+#======================= event loop
+js runs programs with event loop depending on program design 
+there might be several event loops rounds 
+# important:
+there is only one Macro Task Queue but
+each event loop has it's own Micro Task Queue
+event loop start with execution of first sync task in current scope
+and ends with clearing the micro task queue
+
+types of queue in priority order:
+1- nextTick queue
+2- micro queue
+3- macro queue
+#==================== third type of queque process.nextTick() Queue
+will add a callback to next tick queue
+
+#================= Tail call optimization
+this technique greatly imporves efficiency of recursion programs
+an completely prevents stackoverflow caused by recursion
+
+to do this we must return the function at the end (tail) of the function 
+and it return must not be relied on something that is defined inside function and if we need 
+something just pass it as argument to returned function like this:
+
+function factorial (num, total = 1) {
+    if (num === 1) return total
+    return factorial(num-1, total*number)
+}
+
+# this way we make sure there is only one frame in the stack 
+
+: Encapsulation : wrap a series of codes into a sealed space to protect better and reuse them
+: polymorphism : can be used by different ways like console can output any type or iterator works with array, object, enteraces
+
+#============================ Reseting vs Modifying values
+we cannot modify a primitive value, we just create a new value and replace it
+let msg = 'hello'
+msg = msg.toUpperCase()
+# without assignment the msg uppercase won't affect the variables value
+
+# when modifying a value js engine will search current object to find variable 
+if it's not there it goes down the chain to find it and if it isn't found it won't be created
+    BUT
+# in resetting a value  js only searches current object and won't go to prototype chain and if
+it's not found it will be created
+
+# function is a typeof refrence value but we cannot modify it and it can just be replaced
+
+#====================== Douglas Crawfords program: works like Object.create(obj)
+- let a = {msg: 'hello', list:[1,2,3]}
+- function outer (obj) {
+    function inner () {}
+    inner.prototype = obj.prototype
+    return new inner
+  }
+- let myprogram = outer(a)
+
+
+#============================= Combination of two constructor (a genius and creative inheritance p)
+- function Parent () {
+    this.msg = 'hello'
+    this.list = [1, 2, 3]
+}
+
+- function Child () {
+    Parent.call(this)
+}
+
+#====================== typeof & instaceof
+: typeof : tells us the data type can be used as operator or an function so the paranthesis behind it is optional
+in total it returns us 7 types of results : (1- array 2- Set 3- Map 4- null) as object type data
+undeclared variables and empty variables will return 'undefined'
+
+: instanceof : tells us if a given object is created from a certain constructor of not
+it also searched down the prototype chain so if it's inherited from another object that would also
+give us true
+- targetObject instanceof costructorObject
+- targetObject instanceof Object // output: true
+
+* special case of creating null
+- let b = Object.create(null)
+- b instanceof Object // output: false
+
+#============================ Shallow Copy an object
+# will only copy memmory addres of refrence type values
+- let a = Object.assign({}, obj)
+# this way a will share the refrence values with obj and changing a will affect objects 
+refrence values (not primitive ones)
+
+#========================== Deep Copy an object
+# will also copy refrence type values this way the source object won't be affected
+- function deepCopy (source) {
+    if (typeof source !== 'object' || source === null) throw 'illegal value
+
+    let copy = Array.isArray(source) ? [] : {}
+    for (let key in source) {
+        
+        if (typeof source[key] === 'object' && source[key] !== null)
+            //reference type
+            copy[key] = deepCopy(source[key])
+        
+        //primitive type
+        copy[key] = source[key]
+    }
+}
+
+# =========== recreating by tail call optimization
+- function deepCopy (target, source) {
+    if (typeof target !== 'object' || source === null) throw 'Illegal first argument value'
+    if (typeof source !== 'object' || source === null) throw 'Illegal second argument value'
+
+    for (let key in source) {
+        if (typeof source[key] === 'object' && source[key] !== null) {
+
+            if (Array.isArray(source[key])) target[key] = []
+            else target[key] = {}
+
+            deepCopy(target[key], source[key])
+
+        } else {
+            target[key] = source[key]
+        }   
+    }
+    return target
+}
+
+
+#========================== Garbage collection
+a piece of data is made of two parts:
+1- data name: to remove it we need to remove it's scope
+thats why we shouldn't define variables in global scope and that way 
+we should wait untill the program execution is done but if we define in function scope 
+it will remove after function execution
+
+2- data values: are removed by garbage collector automatically
+
+to remove a piece of data from memory we need to remove both data names and values
+
+# before 2012 js used reference count to decide whether a data value should be regard as garbage or not
+
+: Reference Count : is the number of names of values associated with, the reference count of a primitive value
+can only be 1 or 0
+- let msg = 'hello' // now it's referece count is 1
+- msg = null // now it's referece count is 0 which means will be removed by garbage collector
+
+#* an Object is reference type and it's reference count can be bigger than 1 
+- let a = {title: 'hello'} // reference count of object in memmory is 1
+- let b = a // reference count changed to 2
+- a = null // reference count is 1(b is still referring to it) and won't be deleted
+- b = null // reference count is 0 and object will be removed by garbage collector
+
+: Memory Leak : when we forgot to null the variables that we don't need anymore
+they will stay alive till the end 
+
+: Circular Reference : we should avoid it because makes an endless loop of self reference and causes stack overflow
+- let a = {msg: 'hello'} 
+- a.ref = a
+
+# even after nulling object a it won't be removed and waste our memmory
+- a = null
+
+# after 2012 JS has replaced 'reference count' with 'mark and sweep algorithm' 
+: mark and sweep : once a piece of data has become inaccessible it wil be regarded as a piece of garbage
+and removed from memmory and if reference count isn't zero it will remove the variable anyway
+= a = null // this will be deleted even if reference count isn't zero
