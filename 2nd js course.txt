@@ -1410,3 +1410,44 @@ it has two types: 1- right sorting border (if program is left to right) 2- left 
     
     if (!swapped) break
 }
+
+#========================= Cocktail Sorting
+combines forward and backward iteration, good for arrays that just one of element is misplaced
+- let arr = [1,5,4,3,2]
+- let end = arr.length-1
+- let rightSortBorder
+- let leftSortBorder
+
+-for (let index = end; index < end; index++) {
+    let sorted = false
+    let lastExchangeIndex 
+
+    if (index % 2 === 0) {
+        for (let index = 0; index < rightSortBorder; index++) {
+            if (arr[index] < arr[index+1]]) {
+                let temp = arr[index+1]
+                arr[index+1] = arr[index]
+                arr[index] = temp
+                sorted = false
+                lastExchangeIndex = index
+            }
+        }
+        rightSortBorder = lastExchangeIndex
+
+    } else {
+        for (let index = end; index> leftSortBorder; index--) {
+            if (arr[index] > arr[index-1]) {
+                let temp = arr[index-1]
+                arr[index-1] = arr[index]
+                arr[index] = temp
+                lastExchangeIndex = index
+                sorted = false
+            }
+        }
+
+        leftSortBorder = lastExchangeIndex
+
+    }
+        if (sorted) break
+    }
+ 
