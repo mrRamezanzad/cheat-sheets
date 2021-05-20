@@ -1162,3 +1162,251 @@ they will stay alive till the end
 : mark and sweep : once a piece of data has become inaccessible it wil be regarded as a piece of garbage
 and removed from memmory and if reference count isn't zero it will remove the variable anyway
 = a = null // this will be deleted even if reference count isn't zero
+
+@28======================================= Array & String interview questions
+# froEach cant take a second argument to redirect 'this' but we shoud use funtion as callback (not arrow function)
+- let myObj = {text: 'hello'}
+- arr.forEach(function () {console.log(this)}, myObj)
+
+# .concat(): to join two arrays but it makes a shallow copy
+- let arrayAB = arrayA.concat(arrayB)
+
+.filter() also takes two arguments, redirects this and should get normal function
+
+.find() will return the first element that passes the test like .findIndex()
+
+# we should not use 'in operator' with arrays becaust it uses index values (key values)
+# also 'delete operator' will make the element of array undefined and it will still exists in array
+so we should also avoid using 'delete operator' with arrays because it will make a 'hole' in array
+furthermore 'forEach' skips that hole and won't log it but 'for of' will log 'undefined'
+
+
+#========== Strings
+.slice(start, end): it can take negetive value wich makes it to count from end
+- 'hello how are you'.slice(2, -2) // output: llo how are yo
+# notice that the first argument must be highter .slice(5, 2) is a bad setup and returns nothing
+
+.substring(start, end): just like slice with hight tolerance if we setup it bad it will auto switch it from
+.substring(5, 4) ===> .substring(3, 5)
+
+.splice(start_index, number_of_deletion, replacement1, 2, 3):
+can add, delete and replace elements
+it removes the elements and returns removed ones so we can save those removed elements
+
+#================ simple highlight searching in html
+p.innerHTML = text.replace(/selected text/gi, (match) => {
+    return "<b style='color: red'>"+ match +"</b>"
+})
+
+
+@29================================ Data types
+there are 8 data types in js:
+7 Primitives & 1 reference-type(object)
+Primitives: 
+boolean null undefined number big int string Symbol[ES6]
+
+#* are Primitive values are 'immutable' and we cant modify them we just replace them 
+
+reference-type: are 'mutable'
+object array map[ES6] set[ES6] function 
+
+: Wrapper Object : when we use dot with string js engine automatically does type coercion into wrapper object
+so we can use it's methods it does this for example in strings (works on other primitives as well  exept null & undefined): 
+-'his a the string that will auto wrapped'.toUpperCase() ====>
+ Object('this a the string that will auto wrapped').toUpperCase()
+
+ # null & undefined will not be coerced  due to their lack of constructor or prototype
+
+ : implicit conversion : like type coercions or adding string to a numbmer
+ : explicit conversion : Number(), parseInt(), parseFloat()
+
+#==================== limits of 'typeof' & 'instanceof'
+typeof: treats null as an object and won't differentialt array, map & set from object
+
+instanceof: doesn't work with primitives and it searched down the prototype chain 
+which results in returning comparing all reference types to Object as true
+
+#* 'instanceof' must be used with reference-type values and not primitive ones 
+
+- function checkType (data) {
+    if (data === null) return 'data taype: null'
+    if (typeof data === 'function') return 'data type: function'
+
+    if (typeof data === 'object') {
+
+        if (data instanceof Array) return 'data type: Array'
+        if (data instanceof Set) return 'data type: Set'
+        if (data instanceof Map) return 'data type: Map'
+        return 'data type: Object'
+        
+    } else {
+        return typeof data
+    }
+}
+
+# we can also use data.constructor property to check data types because it won't search 
+down the chain but the problems are:
+1- it won't differ null and undefined
+2- we can change the constructor property easily: data.constructor = {title: 'hello'}
+
+# another method to find the types is using .toString()
+.toSring(): returns the string that describes the object it is connected to 
+
+- Object.prototype.toString.call(num) // output: [object Number]
+- Object.prototype.toString.call('hi') // output: [object String]
+- Object.prototype.toString.call([1,3,4]) // output: [object Array]
+- Object.prototype.toString.call(true) // output: [object Boolean]
+
+# but we should split the string at whitespace and remove the last squeare bracket
+
+@31 ====================== Scoping Systems
+Lexical Scoping: sets function scope based on location of definition
+Dynamic Scoping: sets function scope based on invocation location
+
+# the example below shows that scope of function is decided by where 
+the function is defined, not where it's invoked
+- let msg = 'Global msg'
+- function A () {
+    console.log(msg)
+}
+- function B () {
+    let msg = 'hello'
+    A()
+}
+- B() // output: Global msg
+
+#=========================== Bubble Sorting ================================
+# swap without temp
+- let a = 100, b = 200
+- a += b
+- b = a - b
+- a -= b
+
+# count words 
+- let msg = "apple Apple! orange !? Orange MIlk! mild %* ^"
+- let punctuation_pattern = /[\*|\?|\\|\!|\*/g
+- let new_msg = msg.replace(punctuation_pattern, '')
+- new_msg.toLowerCase.split(' ')
+- let counted_words = {}
+- msg.forEach(word => {
+    if (!counter_words[word]) return counted_words = 1
+    ++counted_words
+})
+
+# most used words
+- let max_word_repetition = 0
+- for (let word in counted_words) {
+  if (counted_words[word] > max_word_repetition) max_word_repetition = counted_words[word]
+}
+
+-let most_used_words = []
+- for (let word in counted_words) {
+    if (counted_words[word] === max_word_repetition) most_used_words.push(word)
+}
+
+# least used words // this program is not efficient because we should first find the max to assing it as minimum
+- let min_word_repetition = max_word_repetition // safe solution is to assign min to maximum
+- for (let word in counted_words) {
+    if (counted_words[word] < min_word_repetition) min_word_repetition = counted_words[word]
+}
+
+- let least_used_words = []
+- for (let word in counted_words) {
+    if (counted_words[word] === min_word_repetition) least_used_words.push(word)
+}
+
+# count characters
+- let msg = "Apple, Orange, banana and milk."
+- let counted_chars = new Map()
+- for (let char of msg) {
+    if (counted_chars.has(char)) return counted_chars.set(char, ++counted_chars.get(char))
+    counted_chars.set(char, 1)
+}
+
+# most and least used characters
+...spread count words algorithm 
+- let max = 0
+- for (let chars_count of counted_chars) {
+    if (chars_count[1] > max) max = chars_count[1]
+}   
+
+- let most_used_chars
+- counted_chars.forEach(char => if ( char[1] === max) return most_used.push(char[0]))
+
+
+#====== Bubble sorting 
+#can be used to find the biggest and smallest element or sort ascending and descending
+with x elements it does x-1 rounds to get done
+
+#bringing smallest to the beggining of array
+to do this it's much better to do the loop backwards (right to left)
+- let arr = [8,6,5,9,1,3,4,2,7]
+- let end = arr.length-1
+- for (let index = end; index > 0; index--) {
+    if (arr[index] < arr[index-1]) {
+        let temp = arr[index-1]
+        arr[index-1] = arr[index]
+        arr[index] = temp
+    }
+}
+
+# making smart Bubble sort so if there are some elements sorted the program stops unneccesary loop
+- let arr = [6,5,4,3,2,1]
+- let end = arr.length-1 // it's more efficient to get computing out of loop
+- for (let index = 0; index < end; index++) {
+    let sorted = true
+    for (let index = 0; index < end; index++) {
+        if (arr[index] < arr[index+1]) {
+            let temp = arr[index+1]
+            arr[index+1] = arr[index]
+            arr[index+1] = temp
+        }
+    }
+}
+
+:sorting border: seperates the sorted elements from unsorted elements it's most effective when we have duplicated elements
+it has two types: 1- right sorting border (if program is left to right) 2- left sorting border
+- let arr = [5,4,3,2,1]
+- let end = arr.length-1
+- let rightSortBorder = end
+
+- for (let index = 0; index < end: index++) {
+    let swapped = false
+    let lastExchangeIndex
+    
+    for (let index = 0; index < rightSortBorder; index++) {
+        if (arr[index] < array[index+1]) {
+            let temp = arr[index]
+            arr[index] = arr[index+1]
+            arr[index+1] = temp
+            swapped = true
+            lastExchangeIndex = index
+        }
+    }
+    rightSortBorder = lastExchangeIndex
+
+    if (!swapped) break // improves outer loop efficiency
+}
+
+#leftSortBorder (going the last solution backwards)
+- let arr = [5,4,3,2,1]
+- let end = arr.length-1
+- let leftSortBorder = end
+
+- for (let index = 0; index < end; index++) {
+    let swappedd = false
+    let lastExchangeIndex 
+
+    for (let index = end; index < leftSortBorder; index++) {
+        if (arr[index] > arr[index-1]) {
+            let temp = arr[index-1]
+            arr[index-1] = arr[index]
+            arr[index] = temp
+            lastExchangeIndex = index
+            swapped = true
+        }
+    }
+    leftSortBorder = lastExchangeIndex
+    
+    if (!swapped) break
+}
