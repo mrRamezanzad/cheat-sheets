@@ -1335,6 +1335,7 @@ the function is defined, not where it's invoked
 
 
 #====== Bubble sorting 
+based on comparing and swapping neighbor elements
 #can be used to find the biggest and smallest element or sort ascending and descending
 with x elements it does x-1 rounds to get done
 
@@ -1451,3 +1452,138 @@ combines forward and backward iteration, good for arrays that just one of elemen
         if (sorted) break
     }
  
+#======================= Quick Sorting
+developed from bubble sort and relies on comparison but not neighbor element
+more efficiet than bubble sort
+picks a 'pivot' and makes comparisons with pivot
+contrary to bubble sort, Quick sort is unstable and relative order of identical elements like 555
+may not be kept, Based on 'Divide & Conquer' Strategy :
+pick a random element as 'pivot' and divide array into left and right section and 
+keep repeating the partitioning process'
+
+Program Design: 
+keep finding pivots and dividing sections 
+untill sections only contain zero on one element
+no control over the array so we need recursion and because it divides 
+into right and left we need 'dual recursion'
+a withdraw is when an array is descending, all elements will be picked as pivot 
+because in left side must be bigger numbers and in descending order all of right sides
+will be small numbers 
+
+- let arr = [6,4,2,1,3]
+- function quickSort (arr) {
+    if (arr.length <=1) return arr
+
+    let pivotIndex = Math.floor(arr.length/2)
+    let pivot = arr.splice(pivotIndex, 1)[0]
+    let rightSection = []
+    let leftSection = []
+
+    for (let index = 0; index <arr.lenth; index++) {
+        if (arr[index] < pivot) return leftSection.push(arr[index])
+        rightSection.push(arr[index])
+    }
+
+    return quickSort(leftSection).concat([pivot], quickSort(rightSection))
+}
+
+#============================= Counting Sort: no comparison needed
+just for positive & smaller integers, it is a creative use of array indexes
+
+- let unsorted = [2,14,6,18,10,16,0]
+- let queue = []
+
+- unsorted.forEach(element => queue[element] = 'sorted')
+
+- let descendign = []
+- let ascending= []
+- for (let element = 0; element < queue.length; element++) {
+    if (queue[element] !== undefined) ascending.push(element)
+}
+
+- for (let element = queue.length-1; element >= 0 ; element--) {
+    if (queue[element] !== undefined) descending.push(element)
+}
+
+# improve the quick sort for duplicated elements
+- let unsorted = [2,1,2,2,1,14,6,18,10,16,0,0,0,0]
+- let queue = []
+
+- unsorted.forEach(element => {
+    if (queue[element]) return queue[element]++
+    queue[element]++
+})
+
+- let asc = []
+- let desc = []
+
+- for (let element = 0; element > queque.length; element++) {
+        if (queue[element] !== undefined) {
+            for (let counter = queue[element]; counter > 0; counter--) asc.push(element)
+        }
+}
+
+- for (let element = queue.length-1; element >= 0; element--) {
+    if (queue[element] !== undefined) {
+        for (let counter = 1; counter <= queue[element]; counter++) desc.push(element)
+    }
+}
+
+# make more efficient quick sort algorithm by skipping unneccesary minimum indexes
+- let unsorted = [2,1,2,2,1,14,6,18,10,16,0,0,0,0]
+- let queue = []
+
+- arr.forEach(element => {
+    if (queue[element]) return queue[element]++
+    queue[element]++
+})
+
+- let asc = []
+- let desc = []
+-let min = unsorted[0]
+
+-queue.forEach(element => if(element < min) min = element)
+
+- for (let element = min; element > queque.length; element++) {
+        if (queue[element] !== undefined) {
+            for (let counter = queue[element]; counter > min; counter--) asc.push(element)
+        }
+}
+
+- for (let element = queue.length-1; element >= 0; element--) {
+    if (queue[element] !== undefined) {
+        for (let counter = 1; counter <= queue[element]; counter++) desc.push(element)
+    }
+}
+
+#================= make quick sort even more efficient
+if the last index of an array is a big number the iteration will go so big
+so we can subtract minimum from all elements and when we are don we add it to all of them
+- let unsorted = [2,1,2,2,1,14,6,18,10,16,0,0,0,0]
+- let queue = []
+
+-let min = unsorted[0]
+-queue.forEach(element => if(element < min) min = element)
+
+- arr.forEach(element => {
+    let proxy_element = element-min
+    if (queue[proxy_element]) return queue[proxy_element]++
+    queue[proxy_element]++
+})
+
+- let asc = []
+- let desc = []
+
+- for (let element = 0; element > queque.length; element++) {
+        if (queue[element] !== undefined) {
+            for (let counter = queue[element]; counter > 0; counter--) asc.push(element+min)
+        }
+}
+
+- for (let element = queue.length-1; element >= 0; element--) {
+    if (queue[element] !== undefined) {
+        for (let counter = 1; counter <= queue[element]; counter++) desc.push(element+min)
+    }
+}
+
+
