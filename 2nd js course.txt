@@ -1556,7 +1556,7 @@ just for positive & smaller integers, it is a creative use of array indexes
     }
 }
 
-#================= make quick sort even more efficient
+#================= make counting sort even more efficient
 if the last index of an array is a big number the iteration will go so big
 so we can subtract minimum from all elements and when we are don we add it to all of them
 - let unsorted = [2,1,2,2,1,14,6,18,10,16,0,0,0,0]
@@ -1586,4 +1586,105 @@ so we can subtract minimum from all elements and when we are don we add it to al
     }
 }
 
+#======================== Insertion Sort
+works by picking first element as sorted which parts array into two parts
+notice that in this algorithm we make array ascending and every element must be compared
+to sorted elements and if they are smaller, should go before them
+- let unsorted = [5,6,3,0,1,3,4]
 
+- function insertionSort (arr) {
+
+    let end = arr.length
+    //we start outerCounter as 1 because we have picked it as sorted
+    for (let outerCounter = 1; outerCounter < end; outerCounter++) {
+        for (
+            let innerCounter = outerCounter;
+            innerCounter > 0 && arr[innerCounter] < arr[innerCounter-1];
+            innerCounter--
+        ) {
+            let temp = arr[innerCounter]
+            arr[innerCounter] = arr[innerCounter-1]
+            arr[innerCounter-1] = temp
+        }
+    }
+
+    return arr
+}
+
+let ascending = insertionSort(unsorted)
+
+#============================== Bucket/Bin Sort
+metaphor range of values which includes starting value but not ending 
+Steps:
+iterate to find smallest and biggest elements, we decide baskets total number
+by subtracting smallest from biggest and add one to make sure the last element is 
+bigger than others in the buckets then we divide difference size by number of baskets 
+to get size of each basket to decide each element goes to which bucket, first subtract
+min from element and then floor the division of remaining by basket size
+to keep elements and buckets in order and add new values to them 
+first check if the last index is bigger or smaller than the new value
+if smaller then we add new value to index+1 otherwise we assign the last value to index+1
+and subtract one from index  and do this process until the new value is bigger than the index to assing it to index 
+
+- let unsorted = [5,2,6,10,11,17,4,9,8,20,15,12,16,10]
+- let min, max
+- let length = unsorted.length
+- min = max = unsorted[0]
+- for (let i = 0, i < length; i++) {
+    if (unsorted[i] > max) max = unsorted[i]
+    if (unsorted[i] < min) min = unsorted[i]
+}
+
+- let numberOfBuckets = 6
+- let buckets = []
+- bucketSize = Math.floor((max - min + 1) / numberOfBuckets)
+
+- for (let i = 0; i < length; i++) {
+    let bucketId = Math.floor(unsorted[i] - min)/bucketSize)
+
+    if (!buckets[bucketId]) {
+        buckets[bucketId] = []
+        buckets[bucketId].push(unsorted[i])
+        
+    } else {
+        let bucket = buckets[bucketId]
+        let index = bucket.length-1
+
+        while (bucket[index] > unsorted[i] && index >= 0) {
+            bucket[index+1] = bucket[index]
+            index--
+        }
+        bucket[index+1  ] = unsorted[i]
+    }
+}
+
+- let ascending = []
+- buckets.forEach(bucket => ascending = ascending.concat(bucket))
+
+# we can also make bucket sort in descending order
+
+#========================== Selection Sorting
+Based on swap and is unstable
+basically we find the minimum index and bring it to the first of array each time till the end
+
+- let arr = [5,2,6,0,1,3,4]
+- let length = arr.length
+
+- for (let outer = 0; outer < length; outer++) {
+    let minIndex = outer
+    let sorted = false
+
+    for (let inner = outer+1; inner < length; inner++) {
+        if (arr[minIndex] > arr[inner]) minIndex = inner
+        sorted = false
+
+    }
+
+    if (sorted) break
+
+    let temp = arr[outer]
+    arr[outer] = arr[minIndex]
+    arr[minIndex] = temp
+    
+
+}
