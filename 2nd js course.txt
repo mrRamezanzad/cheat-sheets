@@ -1685,6 +1685,140 @@ basically we find the minimum index and bring it to the first of array each time
     let temp = arr[outer]
     arr[outer] = arr[minIndex]
     arr[minIndex] = temp
-    
-
 }
+
+#============================== Big O notation & Judging Algorithms
+# do we need stable algorithm or not: preserving the relative order of identical elements
+quick and selection are unstable
+
+# time consumtion and memory space consumption are contradict of each other 
+we only get one of them at the time
+
+: time complexity : measuring total amount of work an algorithm does to 
+fully process an output which depends on different machines(computer processor)
+ o number of comparison and swaps
+ o number of iterated elements
+ o number of divides
+
+: space complexity : to measure memory space consumption of algorithm, it does'nt measure size of
+input and just measures extra memory that is needed to process the input
+ o number of variables created
+ o number of frames in stack simultaneously
+
+: Big O Notation : use to quantify time and space complexity
+also called 'Bachnmann-Landau notation' or 'asymptotic notation'
+it's just for comparison, not exact number
+
+we use it to classify algorithms according to how their 
+running time or space requirements grow as the input size grows
+
+# O(math expression represents with n) : n represents input size
+from small to big: O(1) O(log n) O(n) O(n log n) O(n^2)
+O(1): constant growth and complexity has nothing to do with input size
+O(n): Linear growth complexity grows the same amount as input size
+
+examples: 
+finding total of array elements: 
+ time complexity: O(n) 
+ space complexity: O(1)
+finding min and maximum numbers in an array: 
+because we compare n-1 time we have =>
+ time complexity: O(n-1) => O(n) // which simplifying it, is unaffected 
+ space complexity: O(n-1) => O(n)
+
+O(n^2) Quadratic growth:
+buble sort, cocktail sort : hight time complexit but lowest space complexity
+  time complexity: O((n-1)*(n-1)) => O(n^2)
+# in these sorts we create one extra varialbe inside each loop so space complexity is:
+  space complexity: O(1)
+
+# O(log n) O(n log n) : usually used in binary searches and algorithms based on it 
+and the base is usually 2 and we neglect it mostly 
+
+example:
+  quick sort
+    time complexity: O(n log n)
+    space complexity: (log n)
+
+#========================== Obserevre Pattern
+two way data binding, it's a software design pattern 
+an object (subject) contains list of dependecies(observers) and notifies them on any state change
+usually by calling one of their methods
+
+- audience1 = {
+    title: 'Tom',
+    msg: undefined,
+    set_msg (msg) { this.msg = msg }
+}
+- audience2 = {
+    title: 'Jerry',
+    msg: undefined,
+    set_msg (msg) { this.msg = msg }
+}
+
+- function Broadcaster () {
+    this.list = []
+    this.add = function (audience) { this.list.push(audience) }
+    this.remove = function (name) {
+        let indexOfAudience = this.list.indexOf(name)
+        this.list.splice(indexOfAudience, 1)
+    }
+    this.broadcast = function (msg) {
+        this.list.forEach(audience => {
+            audience.set_msg(msg)
+        })
+    }
+}
+
+- let subject = new Broadcaster()
+- subject.add(audience1)
+- subject.add(audience2)
+- subject.remove(audience1)
+- subject.broadcast('hello')
+
+#===================== For Loop Myths
+for (initial expression; second statement of for loop; last statement of for loop)
+
+: initial expression : just executes once at beggining to initialize one or more loop counters
+can be defined outsid foor loop 
+: second statement of for loop: executes in every iteration, the most important expression
+: last statement of for loop : executes every time at the end of each loop
+
+# first and last statement can be empty and definde respectivly outside and inside loop
+- let index = 0
+- for (; index < 10 ;) {
+    console.log(index)
+    index++
+}
+
+
+# merging second and third statement
+- let arr = ['apple', 'orange', 'water', 'milk']
+- let length = arr.length
+
+- for (let counter = -1; (length-1) > counter++; ) {
+    console.log(arr[counter])
+}
+
+# another way to mix them is 
+- for (let counter = 0, item; item = arr[counter++]; )
+# if the item in array isn't defined then the condition is false
+but it's very improtant that all elements of the array must be 'truthy values'
+
+# doing the same loop backwards:
+
+- let counter = arr.length
+- for (; counter-- > 0 ;) {
+    console.log(arr[counter])
+}
+
+# the trick here is every time the for loop condition works after it gets inside for block
+the operation of decrementing is done and the counter is decreased by 1
+
+# doing the same by truthy method:
+- for (let counter = length-1, item; item = arr[counter--]; ) {
+    console.log(arr[item])
+}
+# the trick here is after the item is found and we logged it the counter drops by one
+
+
