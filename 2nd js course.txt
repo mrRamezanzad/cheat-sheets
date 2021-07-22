@@ -10,7 +10,7 @@ with the help of the libuv library.# scope is the current context of execution
 # block scope came in es6 and can be created using curley brackets but var still can be accessed from global scope
 even if it's defined in a block scope and we should use let instead 
 
-# hoisting of a function is higher than a variable ex: assigning a function then a text to a var and accessing it before 
+# hoisting of a function is higher than a variable ex: assigning a function named 'test' then a text to a var name 'test' and accessing it before 
 decleration gives us the function definition because of it's priority but after decleration we get 
 the last one thats been assigned to variable which in this case is text and inside function scope arguments has the lowest priority
 
@@ -57,7 +57,7 @@ step1(4)
 
 
 # before block scope we used closure to simiulate it 
-cluser needs : 1- parent function 2- child function 3- two returns
+closure needs : 1- parent function 2- child function 3- two returns
 
 : in arrow function : if there is just one line of code we don't put curley brackets
 and it will auto returns that line of code (if put brackets you should return manually)
@@ -67,7 +67,7 @@ if wanna return object you should wrap it inside paranthesis msg => ({msg: "hell
 
 # second argument of forEach method lets us redirect 'this' of the callback like .bind()
 
-# in destructureng we can skip middle parts (one or more) and get others
+# in destructuring we can skip middle parts (one or more) and get others
 - let fruits = ['apple', 'orange', 'cranbarry']
 - let [first, , last] = fruits # 
 
@@ -78,7 +78,7 @@ if wanna return object you should wrap it inside paranthesis msg => ({msg: "hell
 
 # Number can't be destructured as an array but can be used by its Object prototype
 # Boolan is like number but have limited object prototype methods (toString, value)
-# Null and doesn't have any object porototype either and can't be destructured
+# Null doesn't have any object porototype either and can't be destructured
 
 #====================== map and set
 before ES6 we used array and object to store collection of data but no more with map and set
@@ -95,13 +95,13 @@ map is more efficient than object
 - map.set(false, 'false as value') # no type restiction of keys (null, undefined, NaN)
 
 # but if assign refrence values like array map.set([1,2,3], 'refrence val')
-we cant use map.get([1,2,3]) and we should do something like 
+we can't use map.get([1,2,3]) and we should do something like 
 - let arr = [1,2,3]
 - map.set(arr, 'refrence val')
 - map.get(arr)
 
 # by using spread operator we can turn a map into a 2D array
-- [...map]
+- let arr = [...map]
 another alternative is:
 - Array.from(map)
 
@@ -134,15 +134,15 @@ another alternative is:
 - let merged = [...new Set([...arr1, ...arr2])]
 
 #========================= Symbol
-# to help us avoid naming collision the 7'th primitive data type came by ES
+# to help us avoid naming collision the 7'th primitive data type came by ES6
 # Symbol has one purpose which is serving as property name in an object
 - let s1 = Symbol(['a description or tag to identify symbol']) # it's very important that we just invoke it and not newing it
-- s1.description() # to get it's description
+- s1.description # to get it's description
 
 # every invocation of symbol will give us a unique value and they are not a symbol wrapper object and thus we don't get any 
 auto complete suggestion they are just have a __proto__ property that points to symbol wrapper object(Symbol.prototype)
-- let s2.Symbol()
-- s☺1 === s2 // output: false
+- let s2 = Symbol('apple')
+- s1 === s2 // output: false
 
 - Symbol.for('apple') # is another alternative to create symbol which gets a key
 # symbol.for difference is it looks for key and if it has been before it just points to that in the next repeats ex:
@@ -157,7 +157,7 @@ auto complete suggestion they are just have a __proto__ property that points to 
 - let collection = {
     a: 1,
     b: 2, 
-    [Symbol(c)]: 3
+    [Symbol('c')]: 3
 }
 
 # Symbol will be put inside the object but will not show inside output of for( in ) because symbol properties are not enumerable
@@ -178,14 +178,14 @@ and put this api inside iterator property of Symbol function  the Symbol.iterato
 api methods or properties
 
 # trick to get only keys or values in 'for of' by setting it's iterator to 
-- Map.prototype[Symbol.iterator] = Map.prototype.values
-- Map.prototype[Symbol.iterator] = Map.prototype.keys
+- map.__proto__[Symbol.iterator] = map.__proto__.values
+- map.__proto__[Symbol.iterator] = map.__proto__.keys
 
 # ========================================= Iteration Protocoles
 
 1- iterable protocole (is for objects) 
 
-# iterable protocol demands object to have a function names Symbol.iterator which can't have arguments and must return 
+# iterable protocol demands object to have a function named Symbol.iterator which can't have arguments and must return 
 an object(iterator object) 
 
 2- iterator protocol # rules for iterator object
@@ -205,7 +205,7 @@ use it with 'for of' to make this process auto
 # =============our custom iterator=============
 let arr = ['a', 'b', 'c']
 
-arr.prototype[Symbol.iterator] = function () {
+arr[Symbol.iterator] = function () {
     let that = this
     let index = 0
 
@@ -243,7 +243,7 @@ entries.next() // output: a
 entries === entries[Symbol.iterator]() // output: true
 
 # === generator function 
-# they can be exited and re-entered without loosing data (variable bindings will be saved across re-enteraces)
+# they can be exited and re-entered without loosing data (variable bindings will be saved across re-enterances)
 saving this functions context is a very important job of the 'generator object'
 - function* generator (i) {
     yield i;
@@ -280,9 +280,9 @@ function* customizeMyCar(obj){
 }
 
 # ============= yield
-with astrisk behind the yield it can handle an out put iterables
+with astrisk behind the yield it can handle an output iterables
 - yield* [1, 2, 3] // output: 1 \n 2 \n 3
-- yield* generator() // output: output code chunks (yields) of the generator function whick returns an iterable     
+- yield* generator() // output: output code chunks (yields) of the generator function which returns an iterable     
 
 #===================== Promises
 promise: is an object that represent the execution result of an asynchronous operation
@@ -293,9 +293,9 @@ promise: is an object that represent the execution result of an asynchronous ope
 'a callback' that we call it here 'executer function'
 
 : promise states : 
-1- pending : is initial state 2-fulfulled: async operation is succeed 3-rejected failed
+1- pending: is initial state 2-fulfilled: async operation is succeed 3-rejected: failed
 
-# fulfill and reject are alson called 'settled promise' and once it's settled the finally() will trigger
+# fulfill and reject are also called 'settled promise' and once it's settled the finally() will trigger
 
 # browser alternative names for promise terms
 promise state == PromiseStatus
@@ -342,7 +342,7 @@ the log in setTimeout prints
 
 #======================= Reflect Obj
 13 static methods that intercept(prevent, stop) javascript operations
-reflect is not a constructor so we cant new or invok it
+reflect is not a constructor so we can't new or invok it's
 methods:
 1- Reflect.apply(): is an alternative to Function.prototype.apply() we implement it:
 Reflect.apply(func, targetObj, [arg1, arg2])

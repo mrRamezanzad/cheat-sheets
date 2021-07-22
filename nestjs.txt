@@ -1,5 +1,5 @@
 nestjs: a framework butlt on top of express with cool feature like:
-1-Empraces TypeScript 2-Dependency Injection 3-Modularity (Angular for back-end)
+1-Embraces TypeScript 2-Dependency Injection 3-Modularity (Angular for back-end)
 
 - npm i -g @nestjs/cli
 
@@ -114,3 +114,37 @@ Generate Schematics:
       │ library       │ lib         │ Generate a new library within a monorepo     │
       │ sub-app       │ app         │ Generate a new application within a monorepo │
       │ resource      │ res         │ Generate a new CRUD resource                 │
+
+
+# adding view engine
+import {NestFactory} from '@nestjs/core'
+import {NestExpressApplication} from '@nestjs/platfor-express'
+import {join} from 'path'
+
+const app = await NestFactory<NestExpressApplication>()
+app.useStaticAssets(join(__dirname, '..', 'public'))
+app.setViewsDir(join(__dirname, '..', 'views'))
+app.setViewEngine('ejs')
+
+# Database 
+#using typeorm
+- npm install --save @nestjs/typeorm typeorm
+
+import {Module} from '@nestjs/common'
+import {TypeOrmModule} from '@nestjs/typeorm
+@Module({
+    imports: [
+        TypeOrmMdule.forRoot({
+            type: 'mongodb',
+            host: 'http://localhost:27017/'
+            username: 'admin',
+            password: 'admin',
+            database: 'test',
+            entities: [],
+            synchronize: true //for production must be off to prevent data loss
+        })
+    ],
+})
+export class AppModule {1}
+
+# we can make a file named ormconfig.json and call forRoot() without passing anything

@@ -1,0 +1,58 @@
+source: https://www.howtographql.com/
+// a new API standard alternative to rest by facebook 
+// declarative data fetching just getting what is needed
+// instead of multiple endpoint ( routes ) GraphQL just uses one endpoint 
+and responds to queris
+
+: Resolver Functions : by monitoring resolvers we'll get insightful Analytics about what data users are requesting
+
+======================  : SDL : schema definition language
+- type Person { 
+    id: ID!
+    name: String! // exclamaiton means requeired field
+    age: Int!
+    posts: [Post!] // this way we add relation to our schemas
+}
+
+- type Post {
+    title: String!
+    author: Person! // this relation is two way related this relation is one-to-many relationship
+}
+
+# Queires have two parts 
+
+{
+    allPersons (last: 2) { // 1- root part  // last: 2 returns only the last two persons which were stored in DB
+        name // 2- payload part
+    }
+}
+
+: Mutaitons : for writing data: 1- creating 2- updating 3- deleting // they look like queries and have root and payloads and arguments
+- mutation {
+    createPerson(name: "Bob", age: 36) {
+        id
+    }
+}
+: Subscritions : in order to have realtime updates from server we use a concept of subscribing to an Event 
+that initiates and keeps a connection with server
+
+- subscrition {
+    newPerson {
+        name
+        age
+    }
+}
+
+==================== : Root Types : 
+- type Query {
+    allPersons(last: Int): [Person!]!
+}
+
+- type Mutation {
+      createPerson(name: String!, age: Int!): Person!
+}
+- type Subscription {
+    newPerson: Person!
+    updatedPost: Post!
+    deletedPerson: Person!
+}
