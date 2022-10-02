@@ -80,7 +80,7 @@
   psql=# DELETE USER <name>;
   ```
 
-## full options of creating user in both methods
+## Full options of creating user in both methods
 
 ---
 
