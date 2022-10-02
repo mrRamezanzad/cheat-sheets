@@ -85,8 +85,8 @@
   createuser <option> <name>
   ```
 - psql way:
-  ```shell
-  createuser <option> <name>
+  ```postgres
+  CREATE USER <name> WITH <option>;
   ```
 
 | Option Syntax                                | PSQL                      | Explanation                                                                                                                      |
