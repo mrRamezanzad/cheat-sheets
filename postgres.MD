@@ -66,7 +66,11 @@
 
   ```postgres
   psql=# ALTER USER <name> WITH PASSWORD <password>;
+  ```
 
+- give a user superuser privileges
+
+  ```postgres
   psql=# ALTER USER <name> WITH SUPERUSER;
   ```
 
