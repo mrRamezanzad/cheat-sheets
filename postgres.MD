@@ -47,7 +47,7 @@
     you can add options like:
 
     ```postgres
-    CREATE ROLE <name> WITH <options> | PASSWORD <password> | SUPERUSER
+    psql=# CREATE ROLE <name> WITH <options> | PASSWORD <password> | SUPERUSER
     ```
 
     expample:
@@ -82,11 +82,11 @@
 
 - shell options way:
   ```shell
-  createuser <option> <name>
+  $ createuser <option> <name>
   ```
 - psql way:
   ```postgres
-  CREATE USER <name> WITH <option>;
+  psql=# CREATE USER <name> WITH <option>;
   ```
 
 | Option Syntax                                | PSQL                      | Explanation                                                                                                                      |
