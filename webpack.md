@@ -25,7 +25,7 @@ Installing dependencies:
 then we set babel configs file:
 
 ```json
-//.babelrc
+// .babelrc
 
 {
   "presets": [
