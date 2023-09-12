@@ -1,6 +1,19 @@
 nestjs: a framework butlt on top of express with cool feature like:
 1-Embraces TypeScript 2-Dependency Injection 3-Modularity (Angular for back-end)
 
+pipes: validate data contained in the request
+Guard: make sure th user is authenticated
+Modules: groups together codes
+Filters: handles errors that occur during request handling
+Interceptors: adds extra logic to incoming request or outgoing responses
+
+
+# Conventions
+- One class per file (some exceptions)
+- Class names should include the kind of the things we are creating
+- Name of class and name of file should always match up
+- Filename template: name.type_of_thing.ts
+
 - npm i -g @nestjs/cli
 
 # nest commandOrAlias requiredArg [optionalArg] [options]
@@ -148,3 +161,48 @@ import {TypeOrmModule} from '@nestjs/typeorm
 export class AppModule {1}
 
 # we can make a file named ormconfig.json and call forRoot() without passing anything
+
+## Pipes
+A pipe is a class annotated with the @Injectable() decorator, which implements the PipeTransform interface.
+usage: 
+- transformation: transform input data to the desired form (e.g., from string to integer)
+- validation: evaluate input data and if valid, simply pass it through unchanged; otherwise, throw an exception when the data is incorrect
+
+### Built-in pipes
+
+Nest comes with nine pipes available out-of-the-box:
+
+    ValidationPipe
+    ParseIntPipe
+    ParseFloatPipe
+    ParseBoolPipe
+    ParseArrayPipe
+    ParseUUIDPipe
+    ParseEnumPipe
+    DefaultValuePipe
+    ParseFilePipe
+
+They're exported from the @nestjs/common package.
+
+usage: 
+```
+
+@Get(':id')
+async findOne(@Param('id', ParseIntPipe) id: number) {
+  return this.catsService.findOne(id);
+}
+```
+> If you want to customize it : ```
+
+@Get(':id')
+async findOne(
+  @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }))
+  id: number,
+) {
+  return this.catsService.findOne(id);
+}
+```
+> pipes also work on @Query() parameters.
+
+### Custom pipes
+
