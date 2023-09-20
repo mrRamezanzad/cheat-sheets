@@ -2,12 +2,14 @@
 Elasticsearch is a real-time distributed and open source full-text search and analytics engine.
 Elasticsearch is an Apache Lucene-based search server, it manages load balancing and horizontal scaling of Apache lucene for data search.
 
+> - Painless language is a Groovy(based on java and all of it's libraries are available to it) based scripting language that elasticsearch developers has built to secure and simplify work with elastic.
 
 ## Apache lucene: 
 Is a search enginge open-source software library. 
 Searches by reverse indexing method which is mountains of data it split them into smaller mountains and thus it gets faster.
 downside of this method is when the request goes up, vertical scaling (adding storage, Ram & CPU) will cost a lot and thus we need to scale horizontally and have a load balancer manage the request to different apache instances (this is the work elasticsearch does for us).
 
+> - Elasticsearch uses lucene quey syntax for it's own queries.  
 
 ## Key Concepts
 - Node:    
@@ -51,7 +53,6 @@ Data will be written here after primary shard.
 
 - Occasionally, Elasticsearch has a problem of Split brain situations.
     > Split brain is a state of a server cluster where nodes diverge from each other and have conflicts when handling incoming I/O operations. The servers may record the same data inconsistently or compete for resources.
-
 
 ## Elastic Search Commands
 
