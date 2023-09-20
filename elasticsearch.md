@@ -9,7 +9,7 @@ Is a search enginge open-source software library.
 Searches by reverse indexing method which is mountains of data it split them into smaller mountains and thus it gets faster.
 downside of this method is when the request goes up, vertical scaling (adding storage, Ram & CPU) will cost a lot and thus we need to scale horizontally and have a load balancer manage the request to different apache instances (this is the work elasticsearch does for us).
 
-> - Elasticsearch uses lucene quey syntax for it's own queries.  
+> - Elasticsearch uses lucene query syntax for it's own queries.  
 
 ## Key Concepts
 - Node:    
