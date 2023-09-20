@@ -2,7 +2,7 @@
 Elasticsearch is a real-time distributed and open source full-text search and analytics engine.
 Elasticsearch is an Apache Lucene-based search server, it manages load balancing and horizontal scaling of Apache lucene for data search.
 
-> - Painless language is a Groovy(based on java and all of it's libraries are available to it) based scripting language that elasticsearch developers has built to secure and simplify work with elastic.
+> - Painless language is a Groovy (based on java and all of it's libraries are available to it) based scripting language that elasticsearch developers has built to secure and simplify work with elastic.
 
 ## Apache lucene: 
 Is a search enginge open-source software library. 
