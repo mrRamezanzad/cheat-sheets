@@ -2,7 +2,37 @@
 Elasticsearch is a real-time distributed and open source full-text search and analytics engine.
 Elasticsearch is an Apache Lucene-based search server, it manages load balancing and horizontal scaling of Apache lucene for data search.
 
-> - Painless language is a Groovy (based on java and all of it's libraries are available to it) based scripting language that elasticsearch developers has built to secure and simplify work with elastic.
+## Grok
+ Logstash is the “L” in the ELK Stack (E: elastic, L: logstash, K: kibana) — the world's most popular log analysis platform and is responsible for aggregating data from different sources, processing it, and sending it down the pipeline, usually to be directly indexed in Elasticsearch.  
+
+ Learn more about Grok : [tutorial](https://coralogix.com/blog/logstash-grok-tutorial-with-examples/)
+
+**Grok** is extended defined pattern based on regex that has lots of predefined templates of regex in logstash documentation to extract and convert logs from data streams.  
+e.g.   
+`%{NUMBER:duration} %{IP:client} %{EMAILADDRESS: client_email}`
+
+Let’s analyze how we would use Grok. Consider the following line in a log file:
+
+
+```
+2020-07-16T19:20:30.45+01:00 DEBUG This is a sample log
+```
+
+here is a grok pattern to extract it:
+
+```json   
+%{TIMESTAMP_ISO8601:time} %{LOGLEVEL:logLevel} %{GREEDYDATA:logMessage}`
+
+// output: 
+{
+  "time": "2020-07-16T19:20:30.45+01:00",
+  "logLevel": "DEBUG",
+  "logMessage": "This is a sample log"
+}
+```
+
+## Painless
+Painless language is a Groovy (based on java and all of it's libraries are available to it) based scripting language that elasticsearch developers has built to secure and simplify work with elastic.
 
 ## Apache lucene: 
 Is a search enginge open-source software library. 
@@ -1059,3 +1089,977 @@ POST /schools/_search?size=0
    }
 }
 ```
+
+## Index APIs
+These APIs are responsible for managing all the aspects of the index like settings, aliases, mappings, index templates.
+
+### Create Index
+This API helps you to create an index. An index can be created automatically when a user is passing JSON objects to any index or it can be created before that. To create an index, you just need to send a PUT request with settings, mappings and aliases or just a simple request without body.
+
+```bash
+PUT colleges
+
+// output: {
+   "acknowledged" : true,
+   "shards_acknowledged" : true,
+   "index" : "colleges"
+}
+```
+
+with more commands it's like:
+
+```bash
+PUT colleges
+{
+  "settings" : {
+      "index" : {
+         "number_of_shards" : 3,
+         "number_of_replicas" : 2
+      }
+   }
+}
+
+// output: {
+    "acknowledged" : true,
+    "shards_acknowledged" : true,
+    "index" : "colleges"
+}
+```
+
+### Delete Index
+This API helps you to delete any index.
+
+```bash
+DELETE /colleges
+```
+
+> You can delete all indices by just using `_all` or `*`
+
+### Get Index
+Returns the information about index.
+
+```bash
+GET colleges
+
+// output: {
+   "colleges" : {
+      "aliases" : {
+         "alias_1" : { },
+         "alias_2" : {
+            "filter" : {
+               "term" : {
+                  "user" : "pkay"
+               }
+            },
+            "index_routing" : "pkay",
+            "search_routing" : "pkay"
+         }
+      },
+      "mappings" : { },
+      "settings" : {
+         "index" : {
+            "creation_date" : "1556245406616",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "3ExJbdl2R1qDLssIkwDAug",
+            "version" : {
+               "created" : "7000099"
+            },
+            "provided_name" : "colleges"
+         }
+      }
+   }
+}
+```
+> You can get the information of all the indices by using `_all` or `*`
+
+### Index Exist
+Existence of an index can be determined by just sending a get request to that index. If the HTTP response is 200, it exists; if it is 404, it does not exist.
+
+```bash
+HEAD colleges
+
+// ouput: 200-OK
+```
+
+### Index Settings
+You can get the index settings by just appending _settings keyword at the end of URL.
+
+```bash
+GET /colleges/_settings
+
+// ouput: {
+   "colleges" : {
+      "settings" : {
+         "index" : {
+            "creation_date" : "1556245406616",
+            "number_of_shards" : "1",
+            "number_of_replicas" : "1",
+            "uuid" : "3ExJbdl2R1qDLssIkwDAug",
+            "version" : {
+               "created" : "7000099"
+            },
+            "provided_name" : "colleges"
+         }
+      }
+   }
+}
+```
+
+### Index Stats
+Extract statistics about a particular index. You just need to send a get request with the index URL and _stats keyword at the end.
+
+```bash
+GET /_stats
+
+// output: ………………………………………………
+},
+   "request_cache" : {
+      "memory_size_in_bytes" : 849,
+      "evictions" : 0,
+      "hit_count" : 1171,
+      "miss_count" : 4
+   },
+   "recovery" : {
+      "current_as_source" : 0,
+      "current_as_target" : 0,
+      "throttle_time_in_millis" : 0
+   }
+} ………………………………………………
+```
+
+### Flush
+The flush process of an index makes sure that any data that is currently only persisted in the transaction log is also permanently persisted in Lucene. This reduces recovery times as that data does not need to be reindexed from the transaction logs after the Lucene indexed is opened.
+
+```bash
+POST colleges/_flush
+
+// output: {
+   "_shards" : {
+      "total" : 2,
+      "successful" : 1,
+      "failed" : 0
+   } 
+}
+```
+
+## Cat APIs
+Usually the results from various Elasticsearch APIs are displayed in JSON format. But JSON is not easy to read always. So cat APIs feature is available in Elasticsearch helps in taking care of giving an easier to read and comprehend printing format of the results. There are various parameters used in cat API which server different purpose, for example - the term V makes the output verbose.
+
+### Verbose
+The verbose output gives a nice display of results of a cat command.
+
+```bash
+GET /_cat/indices?v
+
+output:
+
+health status index uuid pri rep docs.count docs.deleted store.size pri.store.size
+yellow open schools RkMyEn2SQ4yUgzT6EQYuAA 1 1 2 1 21.6kb 21.6kb
+yellow open index_4_analysis zVmZdM1sTV61YJYrNXf1gg 1 1 0 0 283b 283b
+yellow open sensor-2018-01-01 KIrrHwABRB-ilGqTu3OaVQ 1 1 1 0 4.2kb 4.2kb
+yellow open colleges 3ExJbdl2R1qDLssIkwDAug 1 1 0 0 283b 283b
+```
+### Headers
+The h parameter, also called header, is used to display only those columns mentioned in the command.
+
+```bash
+GET /_cat/nodes?h=ip,port // output: 127.0.0.1 9300
+```
+
+### Sort
+The sort command accepts query string which can sort the table by specified column in the query. The default sort is ascending but this can be changed by adding :desc to a column
+
+The below example, gives a result of templates arranged in descending order of the filed index patterns.
+
+```bash
+GET _cat/templates?v&s=order:desc,index_patterns
+
+output: 
+
+name index_patterns order version
+.triggered_watches [.triggered_watches*] 2147483647
+.watch-history-9 [.watcher-history-9*] 2147483647
+.watches [.watches*] 2147483647
+.kibana_task_manager [.kibana_task_manager] 0 7000099
+```
+
+### Count
+The count parameter provides the count of total number of documents in the entire cluster.
+
+```bash
+GET /_cat/count?v
+
+output: 
+epoch timestamp count
+1557633536 03:58:56 17809
+```
+> Epoch : a particular period of time in history or a person's life.  [عصر،‌ دوره] 
+One Epoch is completed when a complete dataset is cycled forward and backward through the neural network or you can say your neural network has watched the entire dataset for once.
+
+## Cluster APIs
+The cluster API is used for getting information about cluster and its nodes and to make changes in them. To call this API, we need to specify the node name, address or _local.
+
+```bash
+GET /_nodes/_local
+
+output: 
+………………………………………………
+cluster_name" : "elasticsearch",
+   "nodes" : {
+      "FKH-5blYTJmff2rJ_lQOCg" : {
+         "name" : "ubuntu",
+         "transport_address" : "127.0.0.1:9300",
+         "host" : "127.0.0.1",
+         "ip" : "127.0.0.1",
+         "version" : "7.0.0",
+         "build_flavor" : "default",
+         "build_type" : "tar",
+         "build_hash" : "b7e28a7",
+         "total_indexing_buffer" : 106502553,
+         "roles" : [
+            "master",
+            "data",
+            "ingest"
+         ],
+         "attributes" : {
+………………………………………………
+```
+
+### Cluster Health
+This API is used to get the status on the health of the cluster by appending the ‘health’ keyword.
+
+```bash
+GET /_cluster/health
+
+output:
+{
+   "cluster_name" : "elasticsearch",
+   "status" : "yellow",
+   "timed_out" : false,
+   "number_of_nodes" : 1,
+   "number_of_data_nodes" : 1,
+   "active_primary_shards" : 7,
+   "active_shards" : 7,
+   "relocating_shards" : 0,
+   "initializing_shards" : 0,
+   "unassigned_shards" : 4,
+   "delayed_unassigned_shards" : 0,
+   "number_of_pending_tasks" : 0,
+   "number_of_in_flight_fetch" : 0,
+   "task_max_waiting_in_queue_millis" : 0,
+   "active_shards_percent_as_number" : 63.63636363636363
+}
+```
+
+### Cluster State
+This API is used to get state information about a cluster by appending the ‘state’ keyword URL. The state information contains version, master node, other nodes, routing table, metadata and blocks.
+
+```bash
+GET /_cluster/state
+
+output: 
+………………………………………………
+{
+   "cluster_name" : "elasticsearch",
+   "cluster_uuid" : "IzKu0OoVTQ6LxqONJnN2eQ",
+   "version" : 89,
+   "state_uuid" : "y3BlwvspR1eUQBTo0aBjig",
+   "master_node" : "FKH-5blYTJmff2rJ_lQOCg",
+   "blocks" : { },
+   "nodes" : {
+      "FKH-5blYTJmff2rJ_lQOCg" : {
+      "name" : "ubuntu",
+      "ephemeral_id" : "426kTGpITGixhEzaM-5Qyg",
+      "transport
+   }
+}
+………………………………………………
+```
+
+### Cluster Stats
+This API helps to retrieve statistics about cluster by using the ‘stats’ keyword. This API returns shard number, store size, memory usage, number of nodes, roles, OS, and file system.
+
+```bash
+GET /_cluster/stats
+
+output: 
+………………………………………….
+"cluster_name" : "elasticsearch",
+"cluster_uuid" : "IzKu0OoVTQ6LxqONJnN2eQ",
+"timestamp" : 1556435464704,
+"status" : "yellow",
+"indices" : {
+   "count" : 7,
+   "shards" : {
+      "total" : 7,
+      "primaries" : 7,
+      "replication" : 0.0,
+      "index" : {
+         "shards" : {
+         "min" : 1,
+         "max" : 1,
+         "avg" : 1.0
+      },
+      "primaries" : {
+         "min" : 1,
+         "max" : 1,
+         "avg" : 1.0
+      },
+      "replication" : {
+         "min" : 0.0,
+         "max" : 0.0,
+         "avg" : 0.0
+      }
+…………………………………………
+```
+
+### Cluster Update Settings
+This API allows you to update the settings of a cluster by using the ‘settings’ keyword. There are two types of settings − persistent (applied across restarts) and transient (do not survive a full cluster restart).
+
+### Node Stats
+This API is used to retrieve the statistics of one more nodes of the cluster. Node stats are almost the same as cluster.
+
+```bash
+GET /_nodes/stats
+
+output: 
+{
+   "_nodes" : {
+      "total" : 1,
+      "successful" : 1,
+      "failed" : 0
+   },
+   "cluster_name" : "elasticsearch",
+   "nodes" : {
+      "FKH-5blYTJmff2rJ_lQOCg" : {
+         "timestamp" : 1556437348653,
+         "name" : "ubuntu",
+         "transport_address" : "127.0.0.1:9300",
+         "host" : "127.0.0.1",
+         "ip" : "127.0.0.1:9300",
+         "roles" : [
+            "master",
+            "data",
+            "ingest"
+         ],
+         "attributes" : {
+            "ml.machine_memory" : "4112797696",
+            "xpack.installed" : "true",
+            "ml.max_open_jobs" : "20"
+         },
+………………………………………………………….
+```
+
+### Nodes hot_threads
+This API helps you to retrieve information about the current hot threads on each node in cluster.
+
+```bash
+GET /_nodes/hot_threads
+
+output: 
+:::{ubuntu}{FKH-5blYTJmff2rJ_lQOCg}{426kTGpITGixhEzaM5Qyg}{127.0.0.1}{127.0.0.1:9300}{ml.machine_memory=4112797696,
+xpack.installed=true, ml.max_open_jobs=20}
+ Hot threads at 2019-04-28T07:43:58.265Z, interval=500ms, busiestThreads=3,
+ignoreIdleThreads=true:
+```
+##  Query DSL
+In Elasticsearch, searching is carried out by using query based on JSON. A query is made up of two clauses: 
+- Leaf Query Clauses − These clauses are match, term or range, which look for a specific value in specific field.
+
+- Compound Query Clauses − These queries are a combination of leaf query clauses and other compound queries to extract the desired information.
+
+A query starts with a query key word and then has conditions and filters inside in the form of JSON object.
+
+
+### Match All Query
+This is the most basic query; it returns all the content and with the score of 1.0 for every object.
+
+```bash
+POST /schools/_search
+{
+   "query":{
+      "match_all":{}
+   }
+}
+
+output: 
+{
+   "took" : 7,
+   "timed_out" : false,
+   "_shards" : {
+      "total" : 1,
+      "successful" : 1,
+      "skipped" : 0,
+      "failed" : 0
+   },
+   "hits" : {
+      "total" : {
+         "value" : 2,
+         "relation" : "eq"
+      },
+      "max_score" : 1.0,
+      "hits" : [
+         {
+            "_index" : "schools",
+            "_type" : "school",
+            "_id" : "5",
+            "_score" : 1.0,
+            "_source" : {
+               "name" : "Central School",
+               "description" : "CBSE Affiliation",
+               "street" : "Nagan",
+               "city" : "paprola",
+               "state" : "HP",
+               "zip" : "176115",
+               "location" : [
+                  31.8955385,
+                  76.8380405
+               ],
+               "fees" : 2200,
+               "tags" : [
+                  "Senior Secondary",
+                  "beautiful campus"
+               ],
+               "rating" : "3.3"
+            }
+         },
+         {
+            "_index" : "schools",
+            "_type" : "school",
+            "_id" : "4",
+            "_score" : 1.0,
+            "_source" : {
+               "name" : "City Best School",
+               "description" : "ICSE",
+               "street" : "West End",
+               "city" : "Meerut",
+               "state" : "UP",
+               "zip" : "250002",
+               "location" : [
+                  28.9926174,
+                  77.692485
+               ],
+               "fees" : 3500,
+               "tags" : [
+                  "fully computerized"
+               ],
+               "rating" : "4.5"
+            }
+         }
+      ]
+   }
+}
+```
+
+### Full Text Queries
+These queries are used to search a full body of text like a chapter or a news article. This query works according to the analyser associated with that particular index or document. 
+
+#### Match query
+This query matches a text or phrase with the values of one or more fields.
+
+```bash
+POST /schools*/_search
+{
+   "query":{
+      "match" : {
+         "rating":"4.5"
+      }
+   }
+}
+
+output: 
+{
+   "took" : 44,
+   "timed_out" : false,
+   "_shards" : {
+      "total" : 1,
+      "successful" : 1,
+      "skipped" : 0,
+      "failed" : 0
+   },
+   "hits" : {
+      "total" : {
+         "value" : 1,
+         "relation" : "eq"
+      },
+      "max_score" : 0.47000363,
+      "hits" : [
+         {
+            "_index" : "schools",
+            "_type" : "school",
+            "_id" : "4",
+            "_score" : 0.47000363,
+            "_source" : {
+               "name" : "City Best School",
+               "description" : "ICSE",
+               "street" : "West End",
+               "city" : "Meerut",
+               "state" : "UP",
+               "zip" : "250002",
+               "location" : [
+                  28.9926174,
+                  77.692485
+               ],
+               "fees" : 3500,
+               "tags" : [
+                  "fully computerized"
+               ],
+               "rating" : "4.5"
+            }
+         }
+      ]
+   }
+}
+```
+
+#### Multi Match Query
+This query matches a text or phrase with more than one field.
+
+```bash
+POST /schools*/_search
+{
+   "query":{
+      "multi_match" : {
+         "query": "paprola",
+         "fields": [ "city", "state" ]
+      }
+   }
+}
+
+output: 
+{
+   "took" : 12,
+   "timed_out" : false,
+   "_shards" : {
+      "total" : 1,
+      "successful" : 1,
+      "skipped" : 0,
+      "failed" : 0
+   },
+   "hits" : {
+      "total" : {
+         "value" : 1,
+         "relation" : "eq"
+      },
+      "max_score" : 0.9808292,
+      "hits" : [
+         {
+            "_index" : "schools",
+            "_type" : "school",
+            "_id" : "5",
+            "_score" : 0.9808292,
+            "_source" : {
+               "name" : "Central School",
+               "description" : "CBSE Affiliation",
+               "street" : "Nagan",
+               "city" : "paprola",
+               "state" : "HP",
+               "zip" : "176115",
+               "location" : [
+                  31.8955385,
+                  76.8380405
+               ],
+               "fees" : 2200,
+               "tags" : [
+                  "Senior Secondary",
+                  "beautiful campus"
+               ],
+               "rating" : "3.3"
+            }
+         }
+      ]
+   }
+}
+```
+
+#### Query String Query
+This query uses query parser and query_string keyword.
+
+```bash
+POST /schools*/_search
+{
+   "query":{
+      "query_string":{
+         "query":"beautiful"
+      }
+   }
+}  
+
+output:
+{
+   "took" : 60,
+   "timed_out" : false,
+   "_shards" : {
+      "total" : 1,
+      "successful" : 1,
+      "skipped" : 0,
+      "failed" : 0
+   },
+   "hits" : {
+      "total" : {
+      "value" : 1,
+      "relation" : "eq"
+   },
+………………………………….
+```
+
+#### Term Level Queries
+These queries mainly deal with structured data like numbers, dates and enums.
+
+```bash
+POST /schools*/_search
+{
+   "query":{
+      "term":{"zip":"176115"}
+   }
+}
+
+output:
+……………………………..
+hits" : [
+   {
+      "_index" : "schools",
+      "_type" : "school",
+      "_id" : "5",
+      "_score" : 0.9808292,
+      "_source" : {
+         "name" : "Central School",
+         "description" : "CBSE Affiliation",
+         "street" : "Nagan",
+         "city" : "paprola",
+         "state" : "HP",
+         "zip" : "176115",
+         "location" : [
+            31.8955385,
+            76.8380405
+         ],
+      }
+   }
+]   
+…………………………………………
+```
+
+#### Range Query
+This query is used to find the objects having values between the ranges of values given. For this, we need to use operators such as −
+
+- gte: greater than equal to  
+- gt : greater-than  
+- lte: less-than equal to  
+- lt : less-than  
+
+```bash
+POST /schools*/_search
+{
+   "query":{
+      "range":{
+         "rating":{
+            "gte":3.5
+         }
+      }
+   }
+}
+
+output: 
+{
+   "took" : 24,
+   "timed_out" : false,
+   "_shards" : {
+      "total" : 1,
+      "successful" : 1,
+      "skipped" : 0,
+      "failed" : 0
+   },
+   "hits" : {
+      "total" : {
+         "value" : 1,
+         "relation" : "eq"
+      },
+      "max_score" : 1.0,
+      "hits" : [
+         {
+            "_index" : "schools",
+            "_type" : "school",
+            "_id" : "4",
+            "_score" : 1.0,
+            "_source" : {
+               "name" : "City Best School",
+               "description" : "ICSE",
+               "street" : "West End",
+               "city" : "Meerut",
+               "state" : "UP",
+               "zip" : "250002",
+               "location" : [
+                  28.9926174,
+                  77.692485
+               ],
+               "fees" : 3500,
+               "tags" : [
+                  "fully computerized"
+               ],
+               "rating" : "4.5"
+            }
+         }
+      ]
+   }
+}
+```
+
+There exist other types of term level queries also such as
+
+- Exists query − If a certain field has non null value.
+
+- Missing query − This is completely opposite to exists query, this query searches for objects without specific fields or fields having null value.
+
+- Wildcard or regexp query − This query uses regular expressions to find patterns in the objects.
+
+#### Compound Queries
+These queries are a collection of different queries merged with each other by using Boolean operators like and, or, not or for different indices or having function calls etc.
+
+```bash
+POST /schools/_search
+{
+   "query": {
+      "bool" : {
+         "must" : {
+            "term" : { "state" : "UP" }
+         },
+         "filter": {
+            "term" : { "fees" : "2200" }
+         },
+         "minimum_should_match" : 1,
+         "boost" : 1.0
+      }
+   }
+}
+
+output: 
+{
+   "took" : 6,
+   "timed_out" : false,
+   "_shards" : {
+      "total" : 1,
+      "successful" : 1,
+      "skipped" : 0,
+      "failed" : 0
+   },
+   "hits" : {
+      "total" : {
+         "value" : 0,
+         "relation" : "eq"
+      },
+      "max_score" : null,
+      "hits" : [ ]
+   }
+}
+```
+
+#### Geo Queries
+These queries deal with geo locations and geo points. These queries help to find out schools or any other geographical object near to any location. You need to use geo point data type.
+
+```bash
+PUT /geo_example
+{
+   "mappings": {
+      "properties": {
+         "location": {
+            "type": "geo_shape"
+         }
+      }
+   }
+}
+
+output: 
+{  "acknowledged" : true,
+   "shards_acknowledged" : true,
+   "index" : "geo_example"
+}
+```
+
+Now we post the data in the index created above.
+
+```bash
+POST /geo_example/_doc?refresh
+{
+   "name": "Chapter One, London, UK",
+   "location": {
+      "type": "point",
+      "coordinates": [11.660544, 57.800286]
+   }
+}
+
+output: 
+
+   "took" : 1,
+   "timed_out" : false,
+   "_shards" : {
+      "total" : 1,
+      "successful" : 1,
+      "skipped" : 0,
+      "failed" : 0
+   },
+   "hits" : {
+      "total" : {
+         "value" : 2,
+         "relation" : "eq"
+      },
+      "max_score" : 1.0,
+      "hits" : [
+         "_index" : "geo_example",
+         "_type" : "_doc",
+         "_id" : "hASWZ2oBbkdGzVfiXHKD",
+         "_score" : 1.0,
+         "_source" : {
+            "name" : "Chapter One, London, UK",
+            "location" : {
+               "type" : "point",
+               "coordinates" : [
+                  11.660544,
+                  57.800286
+               ]
+            }
+         }
+      }
+   }
+```
+
+## Mapping
+Mapping is the outline of the documents stored in an index. It defines the data type like geo_point or string and format of the fields present in the documents and rules to control the mapping of dynamically added fields.
+
+```bash
+PUT bankaccountdetails
+{
+   "mappings":{
+      "properties":{
+         "name": { "type":"text"},
+         "date":{ "type":"date"},
+         "balance":{ "type":"double"},
+         "liability":{ "type":"double"}
+      }
+   }
+ }
+ 
+ output:
+ {
+   "acknowledged" : true,
+   "shards_acknowledged" : true,
+   "index" : "bankaccountdetails"
+}
+```
+### Field Data Types
+Elasticsearch supports a number of different datatypes for the fields in a document.
+
+#### Core Data Types
+These are the basic data types such as text, keyword, date, long, double, boolean or ip, which are supported by almost all the systems.
+
+#### Complex Data Types
+These data types are a combination of core data types. These include array, JSON object and nested data type. An example of nested data type is shown below &minus
+
+e.g.1
+```bash
+POST /tabletennis/_doc/1
+{
+   "group" : "players",
+   "user" : [
+      {
+         "first" : "dave", 
+         "last" : "jones"
+      },
+      {
+         "first" : "kevin", 
+         "last" : "morris"
+      }
+   ]
+}
+
+output:
+{
+   "_index" : "tabletennis",
+   "_type" : "_doc",
+   "_id" : "1",
+   _version" : 2,
+   "result" : "updated",
+   "_shards" : {
+      "total" : 2,
+      "successful" : 1,
+      "failed" : 0
+   },
+   "_seq_no" : 1,
+   "_primary_term" : 1
+}
+```
+
+e.g.2
+```bash
+POST /accountdetails/_doc/1
+{
+   "from_acc":"7056443341",
+   "to_acc":"7032460534",
+   "date":"11/1/2016",
+   "amount":10000
+}
+
+output:
+{  "_index" : "accountdetails",
+   "_type" : "_doc",
+   "_id" : "1",
+   "_version" : 1,
+   "result" : "created",
+   "_shards" : {
+      "total" : 2,
+      "successful" : 1,
+      "failed" : 0
+   },
+   "_seq_no" : 1,
+   "_primary_term" : 1
+}
+```
+
+We can check the above document by using the following command
+
+```bash
+GET /accountdetails/_mappings
+
+output:
+{
+  "accountdetails": {
+    "mappings": {
+      "properties": {
+        "amount": {
+          "type": "long"
+        },
+        "date": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "from_acc": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "to_acc": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+## Removal of Mapping Types
+Indices created in Elasticsearch 7.0.0 or later no longer accept a _default_ mapping. Indices created in 6.x will continue to function as before in Elasticsearch 6.x. Types are deprecated in APIs in 7.0.
