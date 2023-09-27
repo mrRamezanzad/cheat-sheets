@@ -2063,3 +2063,411 @@ output:
 
 ## Removal of Mapping Types
 Indices created in Elasticsearch 7.0.0 or later no longer accept a _default_ mapping. Indices created in 6.x will continue to function as before in Elasticsearch 6.x. Types are deprecated in APIs in 7.0.
+
+## Analysis
+When a query is processed during a search operation, the content in any index is analyzed by the analysis module. This module consists of analyzer, tokenizer, tokenfilters and charfilters. If no analyzer is defined, then by default the built in analyzers, token, filters and tokenizers get registered with analysis module.
+
+```bash
+POST _analyze
+{
+   "analyzer": "standard",
+   "text": "Today's weather is beautiful"
+}
+
+output:
+{
+   "tokens" : [
+      {
+         "token" : "today's",
+         "start_offset" : 0,
+         "end_offset" : 7,
+         "type" : "",
+         "position" : 0
+      },
+      {
+         "token" : "weather",
+         "start_offset" : 8,
+         "end_offset" : 15,
+         "type" : "",
+         "position" : 1
+      },
+      {
+         "token" : "is",
+         "start_offset" : 16,
+         "end_offset" : 18,
+         "type" : "",
+         "position" : 2
+      },
+      {
+         "token" : "beautiful",
+         "start_offset" : 19,
+         "end_offset" : 28,
+         "type" : "",
+         "position" : 3
+      }
+   ]
+}
+```
+
+### Configuring the Standard analyzer
+We can configure the standard analyser with various parameters to get our custom requirements.
+
+In the following example, we configure the standard analyzer to have a max_token_length of 5.
+
+```bash
+PUT index_4_analysis
+{
+   "settings": {
+      "analysis": {
+         "analyzer": {
+            "my_english_analyzer": {
+               "type": "standard",
+               "max_token_length": 5,
+               "stopwords": "_english_"
+            }
+         }
+      }
+   }
+}
+```
+Next we apply the analyser with a text as shown below. Please note how the token is does not appear as it has two spaces in the beginning and two spaces at the end. For the word “is”, there is a space at the beginning of it and a space at the end of it. Taking all of them, it becomes 4 letters with spaces and that does not make it a word. There should be a nonspace character at least at the beginning or at the end, to make it a word to be counted.
+
+```bash
+POST index_4_analysis/_analyze
+{
+   "analyzer": "my_english_analyzer",
+   "text": "Today's weather is beautiful"
+}
+
+output:
+{
+   "tokens" : [
+      {
+         "token" : "today",
+         "start_offset" : 0,
+         "end_offset" : 5,
+         "type" : "",
+         "position" : 0
+      },
+      {
+         "token" : "s",
+         "start_offset" : 6,
+         "end_offset" : 7,
+         "type" : "",
+         "position" : 1
+      },
+      {
+         "token" : "weath",
+         "start_offset" : 8,
+         "end_offset" : 13,
+         "type" : "",
+         "position" : 2
+      },
+      {
+         "token" : "er",
+         "start_offset" : 13,
+         "end_offset" : 15,
+         "type" : "",
+         "position" : 3
+      },
+      {
+         "token" : "beaut",
+         "start_offset" : 19,
+         "end_offset" : 24,
+         "type" : "",
+         "position" : 5
+      },
+      {
+         "token" : "iful",
+         "start_offset" : 24,
+         "end_offset" : 28,
+         "type" : "",
+         "position" : 6
+      }
+   ]
+}
+```
+
+The list of various analyzers and their description are given below:
+
+- Standard analyzer (standard)  
+stopwords and max_token_length setting can be set for this analyzer. By default, stopwords list is empty and max_token_length is 255.
+
+- Simple analyzer (simple)  
+This analyzer is composed of lowercase tokenizer.
+
+- Whitespace analyzer (whitespace)  
+This analyzer is composed of whitespace tokenizer.
+
+- Stop analyzer (stop)  
+stopwords and stopwords_path can be configured. By default stopwords initialized to English stop words and stopwords_path contains path to a text file with stop words.
+
+### Tokenizers
+Tokenizers are used for generating tokens from a text in Elasticsearch. Text can be broken down into tokens by taking whitespace or other punctuations into account. Elasticsearch has plenty of built-in tokenizers, which can be used in custom analyzer.
+
+An example of tokenizer that breaks text into terms whenever it encounters a character which is not a letter, but it also lowercases all terms, is shown below
+
+```bash
+POST _analyze
+{
+   "tokenizer": "lowercase",
+   "text": "It Was a Beautiful Weather 5 Days ago."
+}
+
+output:
+
+   "tokens" : [
+      {
+         "token" : "it",
+         "start_offset" : 0,
+         "end_offset" : 2,
+         "type" : "word",
+         "position" : 0
+      },
+      {
+         "token" : "was",
+         "start_offset" : 3,
+         "end_offset" : 6,
+         "type" : "word",
+         "position" : 1
+      },
+      {
+         "token" : "a",
+         "start_offset" : 7,
+         "end_offset" : 8,
+         "type" : "word",
+         "position" : 2
+      },
+      {
+         "token" : "beautiful",
+         "start_offset" : 9,
+         "end_offset" : 18,
+         "type" : "word",
+         "position" : 3
+      },
+      {
+         "token" : "weather",
+         "start_offset" : 19,
+         "end_offset" : 26,
+         "type" : "word",
+         "position" : 4
+      },
+      {
+         "token" : "days",
+         "start_offset" : 29,
+         "end_offset" : 33,
+         "type" : "word",
+         "position" : 5
+      },
+      {
+         "token" : "ago",
+         "start_offset" : 34,
+         "end_offset" : 37,
+         "type" : "word",
+         "position" : 6
+      }
+   ]
+}
+```
+A list of Tokenizers and their descriptions are shown below:
+
+- Standard tokenizer (standard)  
+This is built on grammar based tokenizer and max_token_length can be configured for this tokenizer.
+
+- Edge NGram tokenizer (edgeNGram)  
+Settings like min_gram, max_gram, token_chars can be set for this tokenizer.
+
+- Keyword tokenizer (keyword)  
+This generates entire input as an output and buffer_size can be set for this.
+
+- Letter tokenizer (letter)  
+This captures the whole word until a non-letter is encountered.
+
+## Elasticsearch - Modules
+Elasticsearch is composed of a number of modules, which are responsible for its functionality. These modules have two types of settings as follows:
+
+- Static Settings  
+ These settings need to be configured in config (elasticsearch.yml) file before starting Elasticsearch. You need to update all the concern nodes in the cluster to reflect the changes by these settings.
+
+- Dynamic Settings  
+These settings can be set on live Elasticsearch.
+
+### Cluster-Level Routing and Shard Allocation
+Cluster level settings decide the allocation of shards to different nodes and reallocation of shards to rebalance cluster. These are the following settings to control shard allocation.
+
+- `cluster.routing.allocation.enable` has values of:
+  - all:  
+  This default value allows shard allocation for all kinds of shards.
+  - primaries:   
+  This allows shard allocation only for primary shards.
+  - new_primaries:  
+  This allows shard allocation only for primary shards for new indices.
+  - none:  
+  This does not allow any shard allocations.
+
+- `cluster.routing.allocation .node_concurrent_recoveries` with value:
+  - Numeric value (by default 2):  
+  This restricts the number of concurrent shard recovery.
+
+- `cluster.routing.allocation .node_initial_primaries_recoveries` with value:
+  - Numeric value (by default 4):  
+  This restricts the number of parallel initial primary recoveries.
+
+- `cluster.routing.allocation.same_shard.host` with value:
+  - Boolean value (by default false):  
+  This restricts the allocation of more than one replica of the same shard in the same physical node.
+
+- `indices.recovery.concurrent _streams` with value:
+  - Numeric value (by default 3):  
+  This controls the number of open network streams per node at the time of shard recovery from peer shards.
+
+- `indices.recovery.concurrent _small_file_streams` with value:
+  - Numeric value (by default 2):  
+  This controls the number of open streams per node for small files having size less than 5mb at the time of shard recovery.
+
+- `cluster.routing.rebalance.enable` with values of:
+  - all:  
+  This default value allows balancing for all kinds of shards.
+
+  - primaries:  
+  This allows shard balancing only for primary shards
+
+  - replicas:  
+  This allows shard balancing only for replica shards.
+
+  - none:  
+  This does not allow any kind of shard balancing.
+
+- `cluster.routing.allocation .allow_rebalance` with values of:
+  - always:  
+  This default value always allows rebalancing.
+
+  - indices_primaries _active:  
+  This allows rebalancing when all primary shards in cluster are allocated.
+
+  - Indices_all_active:  
+  This allows rebalancing when all the primary and replica shards are allocated.
+
+- `cluster.routing.allocation.cluster _concurrent_rebalance` with value: 
+  - Numeric value (by default 2):  
+  This restricts the number of concurrent shard balancing in cluster.
+
+- `cluster.routing.allocation.balance.shard` with value: 
+  - Float value (by default 0.45f):  
+   This defines the weight factor for shards allocated on every node.
+
+- `cluster.routing.allocation.balance.index` with value: 
+  - Float value (by default 0.55f):  
+  This defines the ratio of the number of shards per index allocated on a specific node.
+
+- `cluster.routing.allocation.balance.threshold` with value:
+  - Non negative float value (by default 1.0f):  
+  This is the minimum optimization value of operations that should be performed.
+
+### Disk-based Shard Allocation
+|Setting|Possible value|Description|
+|:----|:----|:----|
+|cluster.routing.allocation.disk.threshold_enabled|Boolean value (by default true)|This enables and disables disk allocation decider.|
+|cluster.routing.allocation.disk.watermark.low|String value(by default 85%)|This denotes maximum usage of disk; after this point, no other shard can be allocated to that disk.|
+|cluster.routing.allocation.disk.watermark.high|String value (by default 90%)|This denotes the maximum usage at the time of allocation; if this point is reached at the time of allocation, then Elasticsearch will allocate that shard to another disk.|
+|cluster.info.update.interval|String value (by default 30s)|This is the interval between disk usages checkups.|
+|cluster.routing.allocation.disk.include_relocations|Boolean value (by default true)|This decides whether to consider the shards currently being allocated, while calculating disk usage.|
+
+### Discovery 
+This module helps a cluster to discover and maintain the state of all the nodes in it. The state of cluster changes when a node is added or deleted from it. The cluster name setting is used to create logical difference between different clusters. There are some modules which help you to use the APIs provided by cloud vendors and those are as given below: 
+
+- Azure discovery
+- EC2 discovery
+- Google compute engine discovery
+- Zen discovery
+
+### Gateway
+This module maintains the cluster state and the shard data across full cluster restarts. The following are the static settings of this module:
+
+|Setting|Possible value|Description|
+|:----|:----|:----|
+|gateway.expected_nodes|numeric value (by default 0)|The number of nodes that are expected to be in the cluster for the recovery of local shards.|
+|gateway.expected_master_nodes|numeric value (by default 0)|The number of master nodes that are expected to be in the cluster before start recovery.|
+|gateway.expected_data_nodes|numeric value (by default 0)|The number of data nodes expected in the cluster before start recovery.|
+|gateway.recover_after_time|String value (by default 5m)|This is the interval between disk usages checkups.|
+|cluster.routing.allocation. disk.include_relocations|Boolean value (by default true)| This specifies the time for which the recovery process will wait to start regardless of the number of nodes joined in the cluster. `gateway.recover_ after_nodes` `gateway.recover_after_master_nodes` `gateway.recover_after_data_nodes`|
+
+### HTTP
+This module manages the communication between HTTP client and Elasticsearch APIs. This module can be disabled by changing the value of http.enabled to false.
+
+The following are the settings (configured in elasticsearch.yml) to control this module:
+- `http.port`:   
+This is a port to access Elasticsearch and it ranges from 9200-`9`300.
+
+- `http.publish_port`:   
+This port is for http clients and is also useful in case of firewall.
+
+- `http.bind_host`:   
+This is a host address for http service.
+
+- `http.publish_host`:   
+This is a host address for http client.
+
+- `http.max_content_length`:   
+This is the maximum size of content in an http request. Its default value is 100mb.
+
+- `http.max_initial_line_length`:   
+This is the maximum size of URL and its default value is 4kb.
+
+- `http.max_header_size`:   
+This is the maximum http header size and its default value is 8kb.
+
+- `http.compression`:   
+This enables or disables support for compression and its default value is false.
+
+- `http.pipelinig`:   
+This enables or disables HTTP pipelining.
+
+- `http.pipelining.max_events`:   
+This restricts the number of events to be queued before closing an HTTP request.
+
+### Indices
+This module maintains the settings, which are set globally for every index. The following settings are mainly related to memory usage
+
+#### Circuit Breaker  
+This is used for preventing operation from causing an OutOfMemroyError. The setting mainly restricts the JVM heap size. For example, indices.breaker.total.limit setting, which defaults to 70% of JVM heap.
+
+#### Fielddata Cache  
+This is used mainly when aggregating on a field. It is recommended to have enough memory to allocate it. The amount of memory used for the field data cache can be controlled using indices.fielddata.cache.size setting.
+
+#### Node Query Cache  
+This memory is used for caching the query results. This cache uses Least Recently Used (LRU) eviction policy. Indices.queries.cahce.size setting controls the memory size of this cache.
+
+#### Indexing Buffer  
+This buffer stores the newly created documents in the index and flushes them when the buffer is full. Setting like indices.memory.index_buffer_size control the amount of heap allocated for this buffer.
+
+#### Shard Request Cache  
+This cache is used to store the local search data for every shard. Cache can be enabled during the creation of index or can be disabled by sending URL parameter.
+
+Disable cache - ?request_cache = true
+Enable cache "index.requests.cache.enable": true
+
+
+#### Indices Recovery  
+It controls the resources during recovery process. The following are the settings
+
+|Setting|Default value|
+|:----|:----|
+|indices.recovery.concurrent_streams|3|
+|indices.recovery.concurrent_small_file_streams|2|
+|indices.recovery.file_chunk_size|512kb|
+|indices.recovery.translog_ops|1000|
+|indices.recovery.translog_size|512kb|
+|indices.recovery.compress|true|
+|indices.recovery.max_bytes_per_sec|40mb|
+
+#### TTL Interval
+Time to Live (TTL) interval defines the time of a document, after which the document gets deleted. The following are the dynamic settings for controlling this process 
+
+|Setting|Default value|
+|:----|:----|
+|indices.ttl.interval|60s|
+|indices.ttl.bulk_size|1000|
+
+### Node
+Each node has an option to be data node or not. You can change this property by changing node.data setting. Setting the value as false defines that the node is not a data node.
